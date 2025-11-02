@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Configurações — Web</title>
+    <link rel="stylesheet" href="style-web.css" />
+  </head>
+  <body>
+    <div class="app">
+      <!-- Topbar: marca (logo centralizada) -->
+      <div class="topbar">
+        <div class="brand"><img src="logo.png" alt="H2O" /></div>
+      </div>
+
+      <!-- Header: navegação principal -->
+      <header class="header">
+        <div class="wrap">
+          <nav>
+            <a href="user-dashboard-web.html">Início</a>
+            <a href="novo-ticket-web.html">Novo</a>
+            <a class="active" href="config-web.html">Config</a>
+            <a href="login-web.html" id="nav-logout">Sair</a>
+          </nav>
+        </div>
+      </header>
+
+      <!-- Conteúdo: preferências simples + sair -->
+      <main class="main">
+        <h2 class="page-title text-center">Configurações</h2>
+
+        <section class="card">
+          <div class="form-group">
+            <label for="theme">Tema</label>
+            <select id="theme">
+              <option value="system">Automático (padrão)</option>
+              <option value="light">Claro</option>
+              <option value="dark">Escuro</option>
+            </select>
+          </div>
+
+          <div class="actions">
+            <button id="logout-btn" class="btn btn-danger">
+              Sair da conta
+            </button>
+          </div>
+
+          <!-- Nota: preferências adicionais podem ser salvas localmente ou na API -->
+        </section>
+      </main>
+
+      <footer class="footer">H2O • v1.0.0</footer>
+    </div>
+    <script src="script-web.js"></script>
+  </body>
+</html>
