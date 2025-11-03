@@ -5,5 +5,9 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
-
+  <ItemGroup>
+    <Compile Remove="SistemaChamados.Web\**\*.cs" />
+    <Content Remove="SistemaChamados.Web\**" />
+    <None Remove="SistemaChamados.Web\**" />
+  </ItemGroup>
 </Project>
