@@ -13,7 +13,7 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection(); // <-- COMENTADO PARA REMOVER O AVISO EM AMBIENTE LOCAL
 app.UseStaticFiles();
 
 app.UseRouting();
