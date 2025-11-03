@@ -1,0 +1,48 @@
+@{
+    ViewData["Title"] = "Novo Chamado";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="app">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <img src="~/img/neurohelp-logo2.png" alt="Logo H2O" class="logo" />
+    <nav>
+      <a href="/Home/UserDashboard">🏠 Início</a>
+      <a href="/Home/NovoTicket" class="active">🆕 Novo Chamado</a>
+      <a href="/Home/Config">⚙️ Configurações</a>
+      <a href="/Home/Index" id="nav-logout">🚪 Sair</a>
+    </nav>
+  </aside>
+
+  <!-- Área principal -->
+  <div class="main">
+    <header class="header">
+      <h1>Novo Chamado</h1>
+    </header>
+
+    <section class="content">
+      <div class="card">
+        <form id="new-ticket-form">
+          <div class="form-group">
+            <label for="description">Descrição</label>
+            <textarea
+              id="description"
+              rows="5"
+              placeholder="Descreva seu problema em detalhes. A IA fará a triagem para você."
+              required
+            ></textarea>
+          </div>
+
+          <button type="submit" class="btn btn-primary">
+            Registrar Chamado
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <footer class="footer">
+      © 2025 Neuro Help — Sistema de Chamados
+    </footer>
+  </div>
+</div>

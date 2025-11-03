@@ -538,7 +538,7 @@ function renderTicketsTable(chamados, tbody) { // Recebe a lista 'chamados' dire
       const id = btn.dataset.id;
       if (id && id !== '#ERR') {
         sessionStorage.setItem('currentTicketId', id);
-        go("ticket-detalhes-desktop.html");
+        go("TicketDetalhes");
       } else {
         console.error("Tentativa de abrir chamado com ID inválido.");
         toast("Erro ao tentar abrir detalhes do chamado.");
@@ -625,7 +625,7 @@ async function initTicketDetails() {
     console.error("initTicketDetails: ID do chamado não encontrado no sessionStorage.");
     toast("Chamado não encontrado. Retornando ao dashboard.");
     // Tenta ir para o dashboard do técnico ou do user
-    return go(document.referrer.includes("tecnico") ? "tecnico-dashboard.html" : "user-dashboard-desktop.html"); 
+    return go(document.referrer.includes("tecnico") ? "TecnicoDashboard" : "UserDashboard"); 
   }
   console.log("--- DEBUG: ID do chamado encontrado:", ticketId, "---");
   // Verificar se o token de autenticação existe
@@ -944,7 +944,7 @@ async function initTicketDetails() {
     } else if (response.status === 404) {
       console.error("initTicketDetails: Chamado não encontrado (404).");
       toast("Chamado não encontrado.");
-      return go(document.referrer.includes("tecnico") ? "tecnico-dashboard.html" : "user-dashboard-desktop.html");
+      return go(document.referrer.includes("tecnico") ? "TecnicoDashboard" : "UserDashboard");
     } else {
       console.error('initTicketDetails: Erro da API:', response.status, response.statusText);
       toast("Erro ao carregar detalhes do chamado.");
@@ -1221,7 +1221,7 @@ function renderTabelaMeusChamados(chamados, tbody) {
       const id = btn.dataset.id;
       if (id && id !== '#ERR') {
         sessionStorage.setItem('currentTicketId', id);
-        go("tecnico-detalhes-desktop.html");
+        go("TecnicoDetalhes");
       } else {
         console.error("Tentativa de ver detalhes com ID inválido.");
         toast("Erro ao tentar abrir detalhes do chamado.");
@@ -1551,10 +1551,10 @@ function initThemeSwitcher() {
  * Ex: go("AdminDashboard") -> /Home/AdminDashboard
  */
 function go(page) {
-  // Remove a extensão .html se existir e capitaliza
+  // Remove extensões .html e sufixos -desktop
   let action = page.replace(".html", "").replace("-desktop", "");
 
-  // Mapeamento manual para os nomes das nossas Ações
+  // Mapeamento manual para garantir que os nomes das Ações sejam encontrados
   const map = {
     "login": "Index",
     "admin-dashboard": "AdminDashboard",
@@ -1562,13 +1562,19 @@ function go(page) {
     "tecnico-dashboard": "TecnicoDashboard",
     "cadastro": "Cadastro",
     "esqueci-senha": "EsqueciSenha",
-    "resetar-senha": "ResetarSenha"
-    // Adicionaremos mais aqui
+    "resetar-senha": "ResetarSenha",
+    "novo-ticket": "NovoTicket",
+    "ticket-detalhes": "TicketDetalhes",
+    "tecnico-detalhes": "TecnicoDetalhes",
+    "admin-tickets": "AdminTickets",
+    "admin-cadastrar-tecnico": "AdminCadastrarTecnico",
+    "config": "Config",
+    "tecnico-config": "TecnicoConfig"
   };
 
-  // Se for um nome conhecido, usa o mapeamento. Senão, usa o nome da página.
-  const actionName = map[action] || page;
+  const actionName = map[action] || action; // Usa o nome mapeado ou o nome limpo
 
+  // Navega para a rota ASP.NET correta
   window.location.href = `/Home/${actionName}`;
 }
 

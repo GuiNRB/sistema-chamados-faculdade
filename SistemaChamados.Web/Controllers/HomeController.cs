@@ -36,6 +36,68 @@ public class HomeController : Controller
         return View();
     }
 
+    // --- DASHBOARDS ---
+    public IActionResult UserDashboard()
+    {
+        ViewData["Title"] = "Meus Chamados";
+        return View();
+    }
+
+    public IActionResult TecnicoDashboard()
+    {
+        ViewData["Title"] = "Painel do Técnico";
+        return View();
+    }
+
+    public IActionResult AdminDashboard()
+    {
+        ViewData["Title"] = "Painel Administrativo";
+        return View();
+    }
+
+    // --- PÁGINAS INTERNAS ---
+    public IActionResult NovoTicket()
+    {
+        ViewData["Title"] = "Novo Chamado";
+        return View();
+    }
+
+    public IActionResult TicketDetalhes()
+    {
+        ViewData["Title"] = "Detalhes do Chamado";
+        return View();
+    }
+
+    public IActionResult TecnicoDetalhes()
+    {
+        ViewData["Title"] = "Detalhes do Chamado";
+        return View();
+    }
+
+    public IActionResult AdminTickets()
+    {
+        ViewData["Title"] = "Gerenciar Chamados";
+        return View();
+    }
+
+    public IActionResult AdminCadastrarTecnico()
+    {
+        ViewData["Title"] = "Cadastrar Técnico";
+        return View();
+    }
+
+    public IActionResult Config()
+    {
+        ViewData["Title"] = "Configurações";
+        return View();
+    }
+
+    public IActionResult TecnicoConfig()
+    {
+        ViewData["Title"] = "Configurações";
+        return View();
+    }
+
     public IActionResult Privacy()
     {
         return View();
