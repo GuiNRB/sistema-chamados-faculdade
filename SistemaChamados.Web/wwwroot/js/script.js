@@ -1743,6 +1743,7 @@ function initPasswordToggles() {
 
 /* ===========================================================
    🚀 INICIALIZAÇÃO GLOBAL (V2 - MODO ASP.NET)
+   ✅ Corrigido para funcionar com rotas ASP.NET MVC
    =========================================================== */
 document.addEventListener("DOMContentLoaded", () => {
   // No ASP.NET MVC, o path será /Home/ActionName
