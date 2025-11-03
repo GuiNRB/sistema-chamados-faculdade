@@ -110,7 +110,7 @@ if (app.Environment.IsDevelopment())
     using (var scope = app.Services.CreateScope())
     {
         var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        context.Database.Migrate();
+        // context.Database.Migrate(); // COMENTADO: Banco já existe, migration será marcada manualmente
         SeedData.Initialize(context);
     }
 }
