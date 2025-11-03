@@ -16,4 +16,10 @@
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Remove="SistemaChamados.Web\**\*.cs" />
+    <Content Remove="SistemaChamados.Web\**" />
+    <None Remove="SistemaChamados.Web\**" />
+  </ItemGroup>
+
 </Project>
