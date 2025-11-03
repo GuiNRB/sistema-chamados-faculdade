@@ -1742,52 +1742,69 @@ function initPasswordToggles() {
 }
 
 /* ===========================================================
-   🚀 INICIALIZAÇÃO GLOBAL
+   🚀 INICIALIZAÇÃO GLOBAL (V2 - MODO ASP.NET)
    =========================================================== */
 document.addEventListener("DOMContentLoaded", () => {
-  const path = window.location.pathname;
+  // No ASP.NET MVC, o path será /Home/ActionName
+  // Ex: /Home/Index, /Home/AdminDashboard, /
+  const path = window.location.pathname.toLowerCase();
 
-  if (path.endsWith("login-desktop.html")) {
+  // Aplica o tema (light/dark) em todas as páginas
+  try {
+    applyInitialTheme();
+  } catch(e) { console.error("Falha ao aplicar tema inicial", e); }
+
+  // Atualiza a saudação em todas as páginas (exceto login/registo)
+  if (!path.endsWith("/") && !path.endsWith("/home/index") && !path.endsWith("/home/cadastro") && !path.endsWith("/home/esquecisenha") && !path.endsWith("/home/resetarsenha")) {
+    atualizarSaudacaoUsuario();
+    initConfig(); // Para que o "Sair" e "Voltar" funcionem em todas as páginas
+  }
+
+  // Roteador de Página: Decide qual função de inicialização chamar
+
+  // --- Autenticação ---
+  if (path.endsWith("/") || path.endsWith("/home/index")) {
     initLogin();
     initPasswordToggles();
-  } else if (path.endsWith("esqueci-senha-desktop.html")) {
-    initEsqueciSenha();
-  } else if (path.endsWith("resetar-senha-desktop.html")) {
-    initResetarSenha();
-  } else if (path.endsWith("admin-dashboard-desktop.html")) {
-    initDashboard();
-    initConfig();
-    atualizarSaudacaoUsuario(); // <-- CHAMADA ADICIONADA
-  } else if (path.endsWith("user-dashboard-desktop.html")) {
-    initDashboard();
-    initConfig();
-    atualizarSaudacaoUsuario(); // <-- CHAMADA ADICIONADA
-  } else if (path.endsWith("cadastro-desktop.html")) {
+  } else if (path.endsWith("/home/cadastro")) {
     initRegister();
-  } else if (path.endsWith("novo-ticket-desktop.html")) {
-    initNewTicket();
-  } else if (path.endsWith("ticket-detalhes-desktop.html")) {
-    initTicketDetails();
-  } else if (path.endsWith("tecnico-detalhes-desktop.html")) {
-    initTicketDetails(); // Reutiliza a mesma função de detalhes
-  } else if (path.endsWith("config-desktop.html")) { // Página do Utilizador Comum
-    initConfig();
-    atualizarSaudacaoUsuario();
-    initThemeSwitcher(); // <-- ADICIONAR ESTA LINHA
-  } else if (path.endsWith("tecnico-config-desktop.html")) { // Página do Técnico
-    initConfig();
-    atualizarSaudacaoUsuario();
-    initThemeSwitcher(); // <-- ADICIONAR ESTA LINHA
-  } else if (path.endsWith("tecnico-dashboard.html")) {
+    initPasswordToggles(); // Para os campos de senha no registo
+  } else if (path.endsWith("/home/esquecisenha")) {
+    initEsqueciSenha();
+  } else if (path.endsWith("/home/resetarsenha")) {
+    initResetarSenha(); // Esta função já lê o token da URL
+  } 
+
+  // --- Dashboards ---
+  else if (path.endsWith("/home/admindashboard")) {
+    initDashboard(); 
+  } else if (path.endsWith("/home/userdashboard")) {
+    initDashboard();
+  } else if (path.endsWith("/home/tecnicodashboard")) {
     initTecnicoDashboard(); 
-    initConfig(); // Mantém o logout
-    atualizarSaudacaoUsuario(); // <-- CHAMADA ADICIONADA
-  } else if (path.endsWith("admin-cadastrar-tecnico.html")) {
-    initCadastrarTecnico();
-    initConfig(); // Mantém o logout
-  } else if (path.endsWith("admin-tickets-desktop.html")) { // <-- ADICIONAR ESTE BLOCO
+  }
+
+  // --- Páginas Internas ---
+  else if (path.endsWith("/home/novoticket")) {
+    initNewTicket();
+  } else if (path.endsWith("/home/ticketdetalhes")) {
+    initTicketDetails();
+  } else if (path.endsWith("/home/tecnicodetalhes")) {
+    initTicketDetails(); // Reutiliza a mesma função
+  }
+
+  // --- Páginas de Admin ---
+  else if (path.endsWith("/home/admintickets")) {
     initAdminTicketsPage();
-    initConfig(); // Para o logout funcionar
+  } else if (path.endsWith("/home/admincadastrartecnico")) {
+    initCadastrarTecnico();
+    initPasswordToggles(); // Para os campos de senha do técnico
+  }
+
+  // --- Configurações ---
+  else if (path.endsWith("/home/config")) {
+    initThemeSwitcher(); // Ativa o botão de Dark Mode
+  } else if (path.endsWith("/home/tecnicoconfig")) {
+    initThemeSwitcher(); // Ativa o botão de Dark Mode
   }
 });
-
