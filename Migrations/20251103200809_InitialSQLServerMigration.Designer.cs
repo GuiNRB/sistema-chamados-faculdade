@@ -12,8 +12,8 @@ using SistemaChamados.Data;
 namespace SistemaChamados.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250929155628_AdicionaEspecialidadeCategoriaId")]
-    partial class AdicionaEspecialidadeCategoriaId
+    [Migration("20251103200809_InitialSQLServerMigration")]
+    partial class InitialSQLServerMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,40 +24,6 @@ namespace SistemaChamados.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("SistemaChamados.Core.Entities.AlunoPerfil", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Curso")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("Matricula")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<int?>("Semestre")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UsuarioId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Matricula")
-                        .IsUnique();
-
-                    b.HasIndex("UsuarioId")
-                        .IsUnique();
-
-                    b.ToTable("AlunoPerfis");
-                });
 
             modelBuilder.Entity("SistemaChamados.Core.Entities.Categoria", b =>
                 {
@@ -115,11 +81,13 @@ namespace SistemaChamados.Migrations
 
                     b.Property<string>("Descricao")
                         .IsRequired()
-                        .HasMaxLength(2000)
-                        .HasColumnType("nvarchar(2000)");
+                        .HasColumnType("NVARCHAR(MAX)");
 
                     b.Property<int>("PrioridadeId")
                         .HasColumnType("int");
+
+                    b.Property<DateTime?>("SlaDataExpiracao")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("SolicitanteId")
                         .HasColumnType("int");
@@ -148,6 +116,39 @@ namespace SistemaChamados.Migrations
                     b.HasIndex("TecnicoId");
 
                     b.ToTable("Chamados");
+                });
+
+            modelBuilder.Entity("SistemaChamados.Core.Entities.Comentario", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ChamadoId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("DataCriacao")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.Property<string>("Texto")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<int>("UsuarioId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ChamadoId");
+
+                    b.HasIndex("UsuarioId");
+
+                    b.ToTable("Comentarios");
                 });
 
             modelBuilder.Entity("SistemaChamados.Core.Entities.Prioridade", b =>
@@ -183,32 +184,6 @@ namespace SistemaChamados.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Prioridades");
-                });
-
-            modelBuilder.Entity("SistemaChamados.Core.Entities.ProfessorPerfil", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("CursoMinistrado")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<int?>("SemestreMinistrado")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UsuarioId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UsuarioId")
-                        .IsUnique();
-
-                    b.ToTable("ProfessorPerfis");
                 });
 
             modelBuilder.Entity("SistemaChamados.Core.Entities.Status", b =>
@@ -297,17 +272,6 @@ namespace SistemaChamados.Migrations
                     b.ToTable("Usuarios");
                 });
 
-            modelBuilder.Entity("SistemaChamados.Core.Entities.AlunoPerfil", b =>
-                {
-                    b.HasOne("SistemaChamados.Core.Entities.Usuario", "Usuario")
-                        .WithOne("AlunoPerfil")
-                        .HasForeignKey("SistemaChamados.Core.Entities.AlunoPerfil", "UsuarioId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Usuario");
-                });
-
             modelBuilder.Entity("SistemaChamados.Core.Entities.Chamado", b =>
                 {
                     b.HasOne("SistemaChamados.Core.Entities.Categoria", "Categoria")
@@ -350,13 +314,21 @@ namespace SistemaChamados.Migrations
                     b.Navigation("Tecnico");
                 });
 
-            modelBuilder.Entity("SistemaChamados.Core.Entities.ProfessorPerfil", b =>
+            modelBuilder.Entity("SistemaChamados.Core.Entities.Comentario", b =>
                 {
-                    b.HasOne("SistemaChamados.Core.Entities.Usuario", "Usuario")
-                        .WithOne("ProfessorPerfil")
-                        .HasForeignKey("SistemaChamados.Core.Entities.ProfessorPerfil", "UsuarioId")
+                    b.HasOne("SistemaChamados.Core.Entities.Chamado", "Chamado")
+                        .WithMany()
+                        .HasForeignKey("ChamadoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("SistemaChamados.Core.Entities.Usuario", "Usuario")
+                        .WithMany()
+                        .HasForeignKey("UsuarioId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Chamado");
 
                     b.Navigation("Usuario");
                 });
@@ -374,13 +346,6 @@ namespace SistemaChamados.Migrations
             modelBuilder.Entity("SistemaChamados.Core.Entities.Status", b =>
                 {
                     b.Navigation("Chamados");
-                });
-
-            modelBuilder.Entity("SistemaChamados.Core.Entities.Usuario", b =>
-                {
-                    b.Navigation("AlunoPerfil");
-
-                    b.Navigation("ProfessorPerfil");
                 });
 #pragma warning restore 612, 618
         }

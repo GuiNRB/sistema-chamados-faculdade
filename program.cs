@@ -14,7 +14,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Configurar Entity Framework
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
     
 // Registrar serviços
 builder.Services.AddScoped<ITokenService, TokenService>();
@@ -104,11 +104,15 @@ builder.Services.AddSwaggerGen(options =>
 
 var app = builder.Build();
 
-// Criar banco de dados em memória para demonstração
-using (var scope = app.Services.CreateScope())
+// Aplicar migrations automaticamente e popular dados iniciais (apenas em desenvolvimento)
+if (app.Environment.IsDevelopment())
 {
-    var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    context.Database.EnsureCreated();
+    using (var scope = app.Services.CreateScope())
+    {
+        var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        context.Database.Migrate();
+        SeedData.Initialize(context);
+    }
 }
 
 // Configure the HTTP request pipeline.
