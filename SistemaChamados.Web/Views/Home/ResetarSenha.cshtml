@@ -1,0 +1,68 @@
+@{
+    ViewData["Title"] = "Definir Nova Senha";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<main class="centered">
+  <div class="auth-box">
+    <div style="text-align: center; margin-bottom: 24px">
+      <img
+        src="~/img/neurohelp-logo.png" alt="Logo Neuro Help"
+        style="width: 180px; height: auto"
+      />
+    </div>
+
+    <h1 class="auth-title">Definir Nova Senha</h1>
+    <p style="color: #64748b; margin-bottom: 20px">
+      Digite sua nova senha nos campos abaixo.
+    </p>
+
+    <form id="resetar-senha-form">
+      <div class="form-group password-wrapper">
+        <label for="nova-senha">Nova Senha</label>
+        <input
+          type="password"
+          id="nova-senha"
+          name="nova-senha"
+          placeholder="Digite sua nova senha"
+          required
+          minlength="6"
+        />
+        <button
+          type="button"
+          class="toggle-btn"
+          data-target="nova-senha"
+          title="Mostrar/ocultar senha"
+        >
+          👁️
+        </button>
+      </div>
+      <div class="form-group password-wrapper">
+        <label for="confirmar-senha">Confirmar Nova Senha</label>
+        <input
+          type="password"
+          id="confirmar-senha"
+          name="confirmar-senha"
+          placeholder="Confirme sua nova senha"
+          required
+          minlength="6"
+        />
+        <button
+          type="button"
+          class="toggle-btn"
+          data-target="confirmar-senha"
+          title="Mostrar/ocultar senha"
+        >
+          👁️
+        </button>
+      </div>
+      <button type="submit" class="btn btn-primary" style="width: 100%">
+        Alterar Senha
+      </button>
+    </form>
+
+    <p style="text-align: center; margin-top: 16px">
+      <a href="/Home/Index">Voltar para o Login</a>
+    </p>
+  </div>
+</main>

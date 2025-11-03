@@ -18,6 +18,24 @@ public class HomeController : Controller
         return View();
     }
 
+    public IActionResult Cadastro()
+    {
+        ViewData["Title"] = "Criar Conta";
+        return View();
+    }
+
+    public IActionResult EsqueciSenha()
+    {
+        ViewData["Title"] = "Recuperar Senha";
+        return View();
+    }
+
+    public IActionResult ResetarSenha()
+    {
+        ViewData["Title"] = "Definir Nova Senha";
+        return View();
+    }
+
     public IActionResult Privacy()
     {
         return View();

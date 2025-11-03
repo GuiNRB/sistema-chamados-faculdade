@@ -141,11 +141,11 @@ function initLogin() {
         
         // Determinar redirecionamento baseado na resposta da API
         if (data.tipoUsuario === 3) { // Admin
-          window.location.href = "admin-dashboard-desktop.html";
+          go("AdminDashboard"); // <-- CORRIGIDO
         } else if (data.tipoUsuario === 2) { // Técnico
-          window.location.href = "tecnico-dashboard.html"; // <-- Redirecionamento CORRETO para técnico
+          go("TecnicoDashboard"); // <-- CORRIGIDO
         } else { // Usuário Comum (TipoUsuario 1 ou outro)
-          window.location.href = "user-dashboard-desktop.html";
+          go("UserDashboard"); // <-- CORRIGIDO
         }
       } else {
         // Tratar erro de autenticação
@@ -212,7 +212,7 @@ async function initEsqueciSenha() {
       
       // Redirecionar para o login
       setTimeout(() => {
-        go("login-desktop.html");
+        go("Index");
       }, 2000);
 
     } catch (error) {
@@ -222,7 +222,7 @@ async function initEsqueciSenha() {
       
       // Redirecionar para o login
       setTimeout(() => {
-        go("login-desktop.html");
+        go("Index");
       }, 2000);
     } finally {
       // Reativar botão
@@ -244,7 +244,7 @@ async function initResetarSenha() {
   if (!token) {
     toast("Token inválido ou em falta.");
     setTimeout(() => {
-      go("login-desktop.html");
+      go("Index");
     }, 2000);
     return;
   }
@@ -297,7 +297,7 @@ async function initResetarSenha() {
         // 9. Sucesso - mostrar mensagem e redirecionar
         toast("Senha redefinida com sucesso!");
         setTimeout(() => {
-          go("login-desktop.html");
+          go("Index");
         }, 2000);
       } else {
         // 10. Erro - mostrar mensagem de erro
@@ -361,7 +361,7 @@ async function initRegister() {
       });
       if (response.ok) {
         toast("Conta criada com sucesso! Por favor, faça o login.");
-        go("login-desktop.html");
+        go("Index");
       } else {
         const errorData = await response.json();
         // Tenta extrair a mensagem de erro específica (ex: "Email já está em uso")
@@ -410,7 +410,7 @@ async function initDashboard() {
   const token = sessionStorage.getItem('authToken');
   if (!token) {
     console.log("initDashboard: Token não encontrado, redirecionando para login.");
-    return go("login-desktop.html");
+    return go("Index");
   }
   console.log("initDashboard: Token encontrado, buscando chamados da API...");
 
@@ -429,7 +429,7 @@ async function initDashboard() {
       console.log("initDashboard: Página de usuário detectada. Buscando chamados para o Solicitante ID:", userId);
     } else {
       console.error("initDashboard: Não foi possível obter o ID do usuário (solicitante) do token.");
-      return go("login-desktop.html"); // Falha ao ler o token, força o login
+      return go("Index"); // Falha ao ler o token, força o login
     }
   }
   // --- FIM DA NOVA LÓGICA DE FILTRO ---
@@ -467,7 +467,7 @@ async function initDashboard() {
       console.log("initDashboard: Token inválido (401), redirecionando para login.");
       sessionStorage.removeItem('authToken');
       toast("Sessão expirada. Faça login novamente.");
-      return go("login-desktop.html");
+      return go("Index");
     } else {
       // Outros erros da API
       console.error('initDashboard: Erro da API:', response.status, response.statusText);
@@ -562,7 +562,7 @@ async function initNewTicket() {
   if (!token) {
     console.error("--- ERRO: Token não encontrado, redirecionando para login. ---"); // Log 4
     toast("Sessão expirada. Faça login novamente.");
-    return go("login-desktop.html");
+    return go("Index");
   }
   console.log("--- DEBUG: Token encontrado. Adicionando listener de submit... ---"); // Log 5
   form.addEventListener("submit", async (e) => {
@@ -598,7 +598,7 @@ async function initNewTicket() {
       if (response.ok) {
         const chamadoCriado = await response.json();
         toast(`Chamado #${chamadoCriado.id} criado e classificado com sucesso!`);
-        go("user-dashboard-desktop.html");
+        go("UserDashboard");
       } else {
         const errorData = await response.json();
         toast(`Erro ao criar chamado: ${errorData.message || 'Tente novamente.'}`);
@@ -633,7 +633,7 @@ async function initTicketDetails() {
   if (!token) {
     console.log("initTicketDetails: Token não encontrado, redirecionando para login.");
     toast("Sessão expirada. Faça login novamente.");
-    return go("login-desktop.html");
+    return go("Index");
   }
   console.log("--- DEBUG: Token encontrado, buscando detalhes da API ---");
   try {
@@ -940,7 +940,7 @@ async function initTicketDetails() {
       console.log("initTicketDetails: Token inválido (401), redirecionando para login.");
       sessionStorage.removeItem('authToken');
       toast("Sessão expirada. Faça login novamente.");
-      return go("login-desktop.html");
+      return go("Index");
     } else if (response.status === 404) {
       console.error("initTicketDetails: Chamado não encontrado (404).");
       toast("Chamado não encontrado.");
@@ -975,7 +975,7 @@ function initConfig() {
       // Tenta descobrir para qual dashboard voltar
       const token = sessionStorage.getItem('authToken');
       if (!token) {
-        return go("login-desktop.html"); // Segurança: se não há token, vai para o login
+        return go("Index"); // Segurança: se não há token, vai para o login
       }
       
       const payload = decodeJWT(token);
@@ -988,11 +988,11 @@ function initConfig() {
       }
       // Redireciona com base no TipoUsuario lido do token
       if (tipoUsuario === 3) {
-        go("admin-dashboard-desktop.html");
+        go("AdminDashboard");
       } else if (tipoUsuario === 2) {
-        go("tecnico-dashboard.html");
+        go("TecnicoDashboard");
       } else {
-        go("user-dashboard-desktop.html");
+        go("UserDashboard");
       }
     });
   }
@@ -1045,7 +1045,7 @@ async function initTecnicoDashboard() {
   const token = sessionStorage.getItem("authToken");
   if (!token) {
     console.log("--- DEBUG: Token NÃO encontrado, redirecionando para login ---"); // Log 2
-    go("login-desktop.html");
+    go("Index");
     return;
   }
   console.log("--- DEBUG: Token encontrado ---"); // Log 3
@@ -1117,7 +1117,7 @@ async function initTecnicoDashboard() {
     if (error.message.includes("Token expirado")) {
         sessionStorage.removeItem("authToken");
         toast("Sessão expirada. Faça login novamente.");
-        go("login-desktop.html");
+        go("Index");
     } else {
         toast("Erro ao carregar dados. Verifique o console para detalhes.");
     }
@@ -1288,7 +1288,7 @@ async function assumirChamado(chamadoId) {
       // Token expirado
       sessionStorage.removeItem('authToken');
       toast("Sessão expirada. Faça login novamente.");
-      go("login-desktop.html");
+      go("Index");
     } else {
       // Outros erros (400, 404, 500)
       console.error('Erro ao assumir chamado:', response.status, response.statusText);
@@ -1406,7 +1406,7 @@ async function initAdminTicketsPage() {
   console.log("--- DEBUG: Entrando em initAdminTicketsPage ---");
   const token = sessionStorage.getItem("authToken");
   if (!token) {
-    go("login-desktop.html");
+    go("Index");
     return;
   }
 
@@ -1545,8 +1545,31 @@ function initThemeSwitcher() {
 /* ===========================================================
    🧭 NAVEGAÇÃO GLOBAL
    =========================================================== */
+/**
+ * Navega para uma Ação no HomeController.
+ * Ex: go("Index") -> /Home/Index
+ * Ex: go("AdminDashboard") -> /Home/AdminDashboard
+ */
 function go(page) {
-  window.location.href = page;
+  // Remove a extensão .html se existir e capitaliza
+  let action = page.replace(".html", "").replace("-desktop", "");
+
+  // Mapeamento manual para os nomes das nossas Ações
+  const map = {
+    "login": "Index",
+    "admin-dashboard": "AdminDashboard",
+    "user-dashboard": "UserDashboard",
+    "tecnico-dashboard": "TecnicoDashboard",
+    "cadastro": "Cadastro",
+    "esqueci-senha": "EsqueciSenha",
+    "resetar-senha": "ResetarSenha"
+    // Adicionaremos mais aqui
+  };
+
+  // Se for um nome conhecido, usa o mapeamento. Senão, usa o nome da página.
+  const actionName = map[action] || page;
+
+  window.location.href = `/Home/${actionName}`;
 }
 
 /* Botão de voltar */
@@ -1560,7 +1583,7 @@ function logout() {
   sessionStorage.removeItem("authToken");
   sessionStorage.removeItem("currentTicketId");
   localStorage.removeItem("user");
-  go("login-desktop.html");
+  go("Index");
 }
 
 /* ===========================================================
@@ -1573,14 +1596,14 @@ async function initCadastrarTecnico() {
   const token = sessionStorage.getItem('authToken');
   if (!token) {
     toast("Acesso negado. Token não encontrado.");
-    go("login-desktop.html");
+    go("Index");
     return;
   }
 
   const payload = decodeJWT(token);
   if (!payload) {
     toast("Acesso negado. Token inválido.");
-    go("login-desktop.html");
+    go("Index");
     return;
   }
 
@@ -1592,7 +1615,7 @@ async function initCadastrarTecnico() {
   
   if (tipoUsuario !== "3") {
     toast("Acesso negado. Apenas administradores podem cadastrar técnicos.");
-    go("login-desktop.html");
+    go("Index");
     return;
   }
 
@@ -1712,7 +1735,7 @@ async function initCadastrarTecnico() {
             toast("Dados inválidos. Verifique os campos e tente novamente.");
           } else if (response.status === 401) {
             toast("Acesso negado. Faça login novamente.");
-            go("login-desktop.html");
+            go("Index");
           } else {
             toast("Erro ao registar técnico. Tente novamente.");
           }
@@ -1747,13 +1770,14 @@ function initPasswordToggles() {
 document.addEventListener("DOMContentLoaded", () => {
   const path = window.location.pathname;
 
-  if (path.endsWith("login-desktop.html")) {
+  if (path.includes("/Home/Index") || path === "/") {
     initLogin();
     initPasswordToggles();
-  } else if (path.endsWith("esqueci-senha-desktop.html")) {
+  } else if (path.includes("/Home/EsqueciSenha")) {
     initEsqueciSenha();
-  } else if (path.endsWith("resetar-senha-desktop.html")) {
+  } else if (path.includes("/Home/ResetarSenha")) {
     initResetarSenha();
+    initPasswordToggles();
   } else if (path.endsWith("admin-dashboard-desktop.html")) {
     initDashboard();
     initConfig();
@@ -1762,8 +1786,9 @@ document.addEventListener("DOMContentLoaded", () => {
     initDashboard();
     initConfig();
     atualizarSaudacaoUsuario(); // <-- CHAMADA ADICIONADA
-  } else if (path.endsWith("cadastro-desktop.html")) {
+  } else if (path.includes("/Home/Cadastro")) {
     initRegister();
+    initPasswordToggles();
   } else if (path.endsWith("novo-ticket-desktop.html")) {
     initNewTicket();
   } else if (path.endsWith("ticket-detalhes-desktop.html")) {
