@@ -34,12 +34,15 @@ builder.Services.AddControllers().AddJsonOptions(options =>
     options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
 });
 
-// Configurar CORS para permitir o frontend (Live Server)
+// Configurar CORS para permitir o frontend (Live Server) E A NOVA APLICAÇÃO WEB
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
     {
-        policy.WithOrigins("http://127.0.0.1:5500", "http://localhost:5500") // Permite o Live Server
+        policy.WithOrigins(
+                  "http://127.0.0.1:5500", "http://localhost:5500", // Live Server antigo
+                  "http://localhost:5027", "https://localhost:7086"  // Portas padrão do ASP.NET MVC Web App (verificadas no launchSettings.json)
+              ) 
               .AllowAnyMethod()
               .AllowAnyHeader();
     });
