@@ -141,11 +141,11 @@ function initLogin() {
         
         // Determinar redirecionamento baseado na resposta da API
         if (data.tipoUsuario === 3) { // Admin
-          go("AdminDashboard"); // <-- CORRIGIDO
+          window.location.href = "admin-dashboard-desktop.html";
         } else if (data.tipoUsuario === 2) { // Técnico
-          go("TecnicoDashboard"); // <-- CORRIGIDO
+          window.location.href = "tecnico-dashboard.html"; // <-- Redirecionamento CORRETO para técnico
         } else { // Usuário Comum (TipoUsuario 1 ou outro)
-          go("UserDashboard"); // <-- CORRIGIDO
+          window.location.href = "user-dashboard-desktop.html";
         }
       } else {
         // Tratar erro de autenticação
@@ -212,7 +212,7 @@ async function initEsqueciSenha() {
       
       // Redirecionar para o login
       setTimeout(() => {
-        go("Index");
+        go("login-desktop.html");
       }, 2000);
 
     } catch (error) {
@@ -222,7 +222,7 @@ async function initEsqueciSenha() {
       
       // Redirecionar para o login
       setTimeout(() => {
-        go("Index");
+        go("login-desktop.html");
       }, 2000);
     } finally {
       // Reativar botão
@@ -244,7 +244,7 @@ async function initResetarSenha() {
   if (!token) {
     toast("Token inválido ou em falta.");
     setTimeout(() => {
-      go("Index");
+      go("login-desktop.html");
     }, 2000);
     return;
   }
@@ -297,7 +297,7 @@ async function initResetarSenha() {
         // 9. Sucesso - mostrar mensagem e redirecionar
         toast("Senha redefinida com sucesso!");
         setTimeout(() => {
-          go("Index");
+          go("login-desktop.html");
         }, 2000);
       } else {
         // 10. Erro - mostrar mensagem de erro
@@ -361,7 +361,7 @@ async function initRegister() {
       });
       if (response.ok) {
         toast("Conta criada com sucesso! Por favor, faça o login.");
-        go("Index");
+        go("login-desktop.html");
       } else {
         const errorData = await response.json();
         // Tenta extrair a mensagem de erro específica (ex: "Email já está em uso")
@@ -410,7 +410,7 @@ async function initDashboard() {
   const token = sessionStorage.getItem('authToken');
   if (!token) {
     console.log("initDashboard: Token não encontrado, redirecionando para login.");
-    return go("Index");
+    return go("login-desktop.html");
   }
   console.log("initDashboard: Token encontrado, buscando chamados da API...");
 
@@ -429,7 +429,7 @@ async function initDashboard() {
       console.log("initDashboard: Página de usuário detectada. Buscando chamados para o Solicitante ID:", userId);
     } else {
       console.error("initDashboard: Não foi possível obter o ID do usuário (solicitante) do token.");
-      return go("Index"); // Falha ao ler o token, força o login
+      return go("login-desktop.html"); // Falha ao ler o token, força o login
     }
   }
   // --- FIM DA NOVA LÓGICA DE FILTRO ---
@@ -467,7 +467,7 @@ async function initDashboard() {
       console.log("initDashboard: Token inválido (401), redirecionando para login.");
       sessionStorage.removeItem('authToken');
       toast("Sessão expirada. Faça login novamente.");
-      return go("Index");
+      return go("login-desktop.html");
     } else {
       // Outros erros da API
       console.error('initDashboard: Erro da API:', response.status, response.statusText);
@@ -538,7 +538,7 @@ function renderTicketsTable(chamados, tbody) { // Recebe a lista 'chamados' dire
       const id = btn.dataset.id;
       if (id && id !== '#ERR') {
         sessionStorage.setItem('currentTicketId', id);
-        go("TicketDetalhes");
+        go("ticket-detalhes-desktop.html");
       } else {
         console.error("Tentativa de abrir chamado com ID inválido.");
         toast("Erro ao tentar abrir detalhes do chamado.");
@@ -562,7 +562,7 @@ async function initNewTicket() {
   if (!token) {
     console.error("--- ERRO: Token não encontrado, redirecionando para login. ---"); // Log 4
     toast("Sessão expirada. Faça login novamente.");
-    return go("Index");
+    return go("login-desktop.html");
   }
   console.log("--- DEBUG: Token encontrado. Adicionando listener de submit... ---"); // Log 5
   form.addEventListener("submit", async (e) => {
@@ -598,7 +598,7 @@ async function initNewTicket() {
       if (response.ok) {
         const chamadoCriado = await response.json();
         toast(`Chamado #${chamadoCriado.id} criado e classificado com sucesso!`);
-        go("UserDashboard");
+        go("user-dashboard-desktop.html");
       } else {
         const errorData = await response.json();
         toast(`Erro ao criar chamado: ${errorData.message || 'Tente novamente.'}`);
@@ -625,7 +625,7 @@ async function initTicketDetails() {
     console.error("initTicketDetails: ID do chamado não encontrado no sessionStorage.");
     toast("Chamado não encontrado. Retornando ao dashboard.");
     // Tenta ir para o dashboard do técnico ou do user
-    return go(document.referrer.includes("tecnico") ? "TecnicoDashboard" : "UserDashboard"); 
+    return go(document.referrer.includes("tecnico") ? "tecnico-dashboard.html" : "user-dashboard-desktop.html"); 
   }
   console.log("--- DEBUG: ID do chamado encontrado:", ticketId, "---");
   // Verificar se o token de autenticação existe
@@ -633,7 +633,7 @@ async function initTicketDetails() {
   if (!token) {
     console.log("initTicketDetails: Token não encontrado, redirecionando para login.");
     toast("Sessão expirada. Faça login novamente.");
-    return go("Index");
+    return go("login-desktop.html");
   }
   console.log("--- DEBUG: Token encontrado, buscando detalhes da API ---");
   try {
@@ -940,11 +940,11 @@ async function initTicketDetails() {
       console.log("initTicketDetails: Token inválido (401), redirecionando para login.");
       sessionStorage.removeItem('authToken');
       toast("Sessão expirada. Faça login novamente.");
-      return go("Index");
+      return go("login-desktop.html");
     } else if (response.status === 404) {
       console.error("initTicketDetails: Chamado não encontrado (404).");
       toast("Chamado não encontrado.");
-      return go(document.referrer.includes("tecnico") ? "TecnicoDashboard" : "UserDashboard");
+      return go(document.referrer.includes("tecnico") ? "tecnico-dashboard.html" : "user-dashboard-desktop.html");
     } else {
       console.error('initTicketDetails: Erro da API:', response.status, response.statusText);
       toast("Erro ao carregar detalhes do chamado.");
@@ -975,7 +975,7 @@ function initConfig() {
       // Tenta descobrir para qual dashboard voltar
       const token = sessionStorage.getItem('authToken');
       if (!token) {
-        return go("Index"); // Segurança: se não há token, vai para o login
+        return go("login-desktop.html"); // Segurança: se não há token, vai para o login
       }
       
       const payload = decodeJWT(token);
@@ -988,11 +988,11 @@ function initConfig() {
       }
       // Redireciona com base no TipoUsuario lido do token
       if (tipoUsuario === 3) {
-        go("AdminDashboard");
+        go("admin-dashboard-desktop.html");
       } else if (tipoUsuario === 2) {
-        go("TecnicoDashboard");
+        go("tecnico-dashboard.html");
       } else {
-        go("UserDashboard");
+        go("user-dashboard-desktop.html");
       }
     });
   }
@@ -1045,7 +1045,7 @@ async function initTecnicoDashboard() {
   const token = sessionStorage.getItem("authToken");
   if (!token) {
     console.log("--- DEBUG: Token NÃO encontrado, redirecionando para login ---"); // Log 2
-    go("Index");
+    go("login-desktop.html");
     return;
   }
   console.log("--- DEBUG: Token encontrado ---"); // Log 3
@@ -1117,7 +1117,7 @@ async function initTecnicoDashboard() {
     if (error.message.includes("Token expirado")) {
         sessionStorage.removeItem("authToken");
         toast("Sessão expirada. Faça login novamente.");
-        go("Index");
+        go("login-desktop.html");
     } else {
         toast("Erro ao carregar dados. Verifique o console para detalhes.");
     }
@@ -1221,7 +1221,7 @@ function renderTabelaMeusChamados(chamados, tbody) {
       const id = btn.dataset.id;
       if (id && id !== '#ERR') {
         sessionStorage.setItem('currentTicketId', id);
-        go("TecnicoDetalhes");
+        go("tecnico-detalhes-desktop.html");
       } else {
         console.error("Tentativa de ver detalhes com ID inválido.");
         toast("Erro ao tentar abrir detalhes do chamado.");
@@ -1288,7 +1288,7 @@ async function assumirChamado(chamadoId) {
       // Token expirado
       sessionStorage.removeItem('authToken');
       toast("Sessão expirada. Faça login novamente.");
-      go("Index");
+      go("login-desktop.html");
     } else {
       // Outros erros (400, 404, 500)
       console.error('Erro ao assumir chamado:', response.status, response.statusText);
@@ -1406,7 +1406,7 @@ async function initAdminTicketsPage() {
   console.log("--- DEBUG: Entrando em initAdminTicketsPage ---");
   const token = sessionStorage.getItem("authToken");
   if (!token) {
-    go("Index");
+    go("login-desktop.html");
     return;
   }
 
@@ -1545,37 +1545,8 @@ function initThemeSwitcher() {
 /* ===========================================================
    🧭 NAVEGAÇÃO GLOBAL
    =========================================================== */
-/**
- * Navega para uma Ação no HomeController.
- * Ex: go("Index") -> /Home/Index
- * Ex: go("AdminDashboard") -> /Home/AdminDashboard
- */
 function go(page) {
-  // Remove extensões .html e sufixos -desktop
-  let action = page.replace(".html", "").replace("-desktop", "");
-
-  // Mapeamento manual para garantir que os nomes das Ações sejam encontrados
-  const map = {
-    "login": "Index",
-    "admin-dashboard": "AdminDashboard",
-    "user-dashboard": "UserDashboard",
-    "tecnico-dashboard": "TecnicoDashboard",
-    "cadastro": "Cadastro",
-    "esqueci-senha": "EsqueciSenha",
-    "resetar-senha": "ResetarSenha",
-    "novo-ticket": "NovoTicket",
-    "ticket-detalhes": "TicketDetalhes",
-    "tecnico-detalhes": "TecnicoDetalhes",
-    "admin-tickets": "AdminTickets",
-    "admin-cadastrar-tecnico": "AdminCadastrarTecnico",
-    "config": "Config",
-    "tecnico-config": "TecnicoConfig"
-  };
-
-  const actionName = map[action] || action; // Usa o nome mapeado ou o nome limpo
-
-  // Navega para a rota ASP.NET correta
-  window.location.href = `/Home/${actionName}`;
+  window.location.href = page;
 }
 
 /* Botão de voltar */
@@ -1589,7 +1560,7 @@ function logout() {
   sessionStorage.removeItem("authToken");
   sessionStorage.removeItem("currentTicketId");
   localStorage.removeItem("user");
-  go("Index");
+  go("login-desktop.html");
 }
 
 /* ===========================================================
@@ -1602,14 +1573,14 @@ async function initCadastrarTecnico() {
   const token = sessionStorage.getItem('authToken');
   if (!token) {
     toast("Acesso negado. Token não encontrado.");
-    go("Index");
+    go("login-desktop.html");
     return;
   }
 
   const payload = decodeJWT(token);
   if (!payload) {
     toast("Acesso negado. Token inválido.");
-    go("Index");
+    go("login-desktop.html");
     return;
   }
 
@@ -1621,7 +1592,7 @@ async function initCadastrarTecnico() {
   
   if (tipoUsuario !== "3") {
     toast("Acesso negado. Apenas administradores podem cadastrar técnicos.");
-    go("Index");
+    go("login-desktop.html");
     return;
   }
 
@@ -1741,7 +1712,7 @@ async function initCadastrarTecnico() {
             toast("Dados inválidos. Verifique os campos e tente novamente.");
           } else if (response.status === 401) {
             toast("Acesso negado. Faça login novamente.");
-            go("Index");
+            go("login-desktop.html");
           } else {
             toast("Erro ao registar técnico. Tente novamente.");
           }
@@ -1771,54 +1742,70 @@ function initPasswordToggles() {
 }
 
 /* ===========================================================
-   🚀 INICIALIZAÇÃO GLOBAL
+   🚀 INICIALIZAÇÃO GLOBAL (V2 - MODO ASP.NET)
    =========================================================== */
 document.addEventListener("DOMContentLoaded", () => {
-  const path = window.location.pathname;
+  // No ASP.NET MVC, o path será /Home/ActionName
+  // Ex: /Home/Index, /Home/AdminDashboard, /
+  const path = window.location.pathname.toLowerCase();
 
-  if (path.includes("/Home/Index") || path === "/") {
+  // Aplica o tema (light/dark) em todas as páginas
+  try {
+    applyInitialTheme();
+  } catch(e) { console.error("Falha ao aplicar tema inicial", e); }
+
+  // Atualiza a saudação em todas as páginas (exceto login/registo)
+  if (!path.endsWith("/") && !path.endsWith("/home/index") && !path.endsWith("/home/cadastro") && !path.endsWith("/home/esquecisenha") && !path.endsWith("/home/resetarsenha")) {
+    atualizarSaudacaoUsuario();
+    initConfig(); // Para que o "Sair" e "Voltar" funcionem em todas as páginas
+  }
+
+  // Roteador de Página: Decide qual função de inicialização chamar
+
+  // --- Autenticação ---
+  if (path.endsWith("/") || path.endsWith("/home/index")) {
     initLogin();
     initPasswordToggles();
-  } else if (path.includes("/Home/EsqueciSenha")) {
-    initEsqueciSenha();
-  } else if (path.includes("/Home/ResetarSenha")) {
-    initResetarSenha();
-    initPasswordToggles();
-  } else if (path.endsWith("admin-dashboard-desktop.html")) {
-    initDashboard();
-    initConfig();
-    atualizarSaudacaoUsuario(); // <-- CHAMADA ADICIONADA
-  } else if (path.endsWith("user-dashboard-desktop.html")) {
-    initDashboard();
-    initConfig();
-    atualizarSaudacaoUsuario(); // <-- CHAMADA ADICIONADA
-  } else if (path.includes("/Home/Cadastro")) {
+  } else if (path.endsWith("/home/cadastro")) {
     initRegister();
-    initPasswordToggles();
-  } else if (path.endsWith("novo-ticket-desktop.html")) {
-    initNewTicket();
-  } else if (path.endsWith("ticket-detalhes-desktop.html")) {
-    initTicketDetails();
-  } else if (path.endsWith("tecnico-detalhes-desktop.html")) {
-    initTicketDetails(); // Reutiliza a mesma função de detalhes
-  } else if (path.endsWith("config-desktop.html")) { // Página do Utilizador Comum
-    initConfig();
-    atualizarSaudacaoUsuario();
-    initThemeSwitcher(); // <-- ADICIONAR ESTA LINHA
-  } else if (path.endsWith("tecnico-config-desktop.html")) { // Página do Técnico
-    initConfig();
-    atualizarSaudacaoUsuario();
-    initThemeSwitcher(); // <-- ADICIONAR ESTA LINHA
-  } else if (path.endsWith("tecnico-dashboard.html")) {
+    initPasswordToggles(); // Para os campos de senha no registo
+  } else if (path.endsWith("/home/esquecisenha")) {
+    initEsqueciSenha();
+  } else if (path.endsWith("/home/resetarsenha")) {
+    initResetarSenha(); // Esta função já lê o token da URL
+  } 
+
+  // --- Dashboards ---
+  else if (path.endsWith("/home/admindashboard")) {
+    initDashboard(); 
+  } else if (path.endsWith("/home/userdashboard")) {
+    initDashboard();
+  } else if (path.endsWith("/home/tecnicodashboard")) {
     initTecnicoDashboard(); 
-    initConfig(); // Mantém o logout
-    atualizarSaudacaoUsuario(); // <-- CHAMADA ADICIONADA
-  } else if (path.endsWith("admin-cadastrar-tecnico.html")) {
-    initCadastrarTecnico();
-    initConfig(); // Mantém o logout
-  } else if (path.endsWith("admin-tickets-desktop.html")) { // <-- ADICIONAR ESTE BLOCO
+  }
+
+  // --- Páginas Internas ---
+  else if (path.endsWith("/home/novoticket")) {
+    initNewTicket();
+  } else if (path.endsWith("/home/ticketdetalhes")) {
+    initTicketDetails();
+  } else if (path.endsWith("/home/tecnicodetalhes")) {
+    initTicketDetails(); // Reutiliza a mesma função
+  }
+
+  // --- Páginas de Admin ---
+  else if (path.endsWith("/home/admintickets")) {
     initAdminTicketsPage();
-    initConfig(); // Para o logout funcionar
+  } else if (path.endsWith("/home/admincadastrartecnico")) {
+    initCadastrarTecnico();
+    initPasswordToggles(); // Para os campos de senha do técnico
+  }
+
+  // --- Configurações ---
+  else if (path.endsWith("/home/config")) {
+    initThemeSwitcher(); // Ativa o botão de Dark Mode
+  } else if (path.endsWith("/home/tecnicoconfig")) {
+    initThemeSwitcher(); // Ativa o botão de Dark Mode
   }
 });
 
