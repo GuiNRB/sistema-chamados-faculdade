@@ -4,15 +4,15 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - NeuroHelp</title>
-    
+
     <link rel="stylesheet" href="~/css/style.css" />
 </head>
 <body>
-    
+
     @RenderBody()
 
     <script src="~/js/script.js"></script>
-    
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

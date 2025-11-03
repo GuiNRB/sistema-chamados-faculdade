@@ -1742,24 +1742,18 @@ function initPasswordToggles() {
 }
 
 /* ===========================================================
-   🚀 INICIALIZAÇÃO GLOBAL (V2 - MODO ASP.NET)
+   🚀 INICIALIZAÇÃO GLOBAL
    =========================================================== */
 document.addEventListener("DOMContentLoaded", () => {
-  // No ASP.NET MVC, o path será /Home/ActionName
-  // Ex: /Home/Index, /Home/AdminDashboard, /
-  const path = window.location.pathname.toLowerCase();
+  const path = window.location.pathname;
 
-  if (path.includes("/Home/Index") || path === "/") {
+  if (path.endsWith("login-desktop.html")) {
     initLogin();
     initPasswordToggles();
-  } else if (path.endsWith("/home/cadastro")) {
-    initRegister();
-    initPasswordToggles(); // Para os campos de senha no registo
-  } else if (path.endsWith("/home/esquecisenha")) {
+  } else if (path.endsWith("esqueci-senha-desktop.html")) {
     initEsqueciSenha();
-  } else if (path.includes("/Home/ResetarSenha")) {
+  } else if (path.endsWith("resetar-senha-desktop.html")) {
     initResetarSenha();
-    initPasswordToggles();
   } else if (path.endsWith("admin-dashboard-desktop.html")) {
     initDashboard();
     initConfig();
@@ -1768,12 +1762,11 @@ document.addEventListener("DOMContentLoaded", () => {
     initDashboard();
     initConfig();
     atualizarSaudacaoUsuario(); // <-- CHAMADA ADICIONADA
-  } else if (path.includes("/Home/Cadastro")) {
+  } else if (path.endsWith("cadastro-desktop.html")) {
     initRegister();
-    initPasswordToggles();
   } else if (path.endsWith("novo-ticket-desktop.html")) {
     initNewTicket();
-  } else if (path.endsWith("/home/ticketdetalhes")) {
+  } else if (path.endsWith("ticket-detalhes-desktop.html")) {
     initTicketDetails();
   } else if (path.endsWith("tecnico-detalhes-desktop.html")) {
     initTicketDetails(); // Reutiliza a mesma função de detalhes
