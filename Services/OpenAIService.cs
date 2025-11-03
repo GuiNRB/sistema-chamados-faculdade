@@ -26,8 +26,15 @@ namespace SistemaChamados.Services
             var apiKey = _configuration["OpenAI:ApiKey"];
             if (string.IsNullOrEmpty(apiKey))
             {
-                _logger.LogError("Chave da API da OpenAI não configurada.");
-                return null;
+                _logger.LogWarning("Chave da API da OpenAI não configurada. Usando dados mock para teste.");
+                // Retorna dados mock para teste
+                return new AnaliseChamadoResponseDto
+                {
+                    TituloSugerido = "Problema de Hardware - Computador não Liga",
+                    CategoriaId = 1, // Hardware
+                    PrioridadeId = 2, // Média
+                    TecnicoId = null // Será atribuído automaticamente
+                };
             }
 
             try

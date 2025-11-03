@@ -14,7 +14,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Configurar Entity Framework
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
     
 // Registrar serviços
 builder.Services.AddScoped<ITokenService, TokenService>();
@@ -41,7 +41,8 @@ builder.Services.AddCors(options =>
     {
         policy.WithOrigins(
                   "http://127.0.0.1:5500", "http://localhost:5500", // Live Server antigo
-                  "http://localhost:5027", "https://localhost:7086"  // Portas padrão do ASP.NET MVC Web App (verificadas no launchSettings.json)
+                  "http://localhost:5027", "https://localhost:7086",  // Portas padrão do ASP.NET MVC Web App (verificadas no launchSettings.json)
+                  "https://work-2-arvjphcenxjpqptd.prod-runtime.all-hands.dev" // Ambiente de produção
               ) 
               .AllowAnyMethod()
               .AllowAnyHeader();

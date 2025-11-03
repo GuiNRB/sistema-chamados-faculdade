@@ -54,7 +54,7 @@ applyInitialTheme();
 // ===========================================================
 
 /* URL base da API */
-const API_BASE = "http://localhost:5246";
+const API_BASE = "https://work-1-arvjphcenxjpqptd.prod-runtime.all-hands.dev";
 
 /* ===========================================================
    🚀 SEED DE DEMONSTRAÇÃO (DADOS INICIAIS)
@@ -124,8 +124,8 @@ function initLogin() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          Email: email,
-          Senha: password
+          email: email,
+          senha: password
         })
       });
 
@@ -141,11 +141,11 @@ function initLogin() {
         
         // Determinar redirecionamento baseado na resposta da API
         if (data.tipoUsuario === 3) { // Admin
-          window.location.href = "admin-dashboard-desktop.html";
+          window.location.href = "/Home/AdminDashboard";
         } else if (data.tipoUsuario === 2) { // Técnico
-          window.location.href = "tecnico-dashboard.html"; // <-- Redirecionamento CORRETO para técnico
+          window.location.href = "/Home/TecnicoDashboard";
         } else { // Usuário Comum (TipoUsuario 1 ou outro)
-          window.location.href = "user-dashboard-desktop.html";
+          window.location.href = "/Home/UserDashboard";
         }
       } else {
         // Tratar erro de autenticação
@@ -203,7 +203,7 @@ async function initEsqueciSenha() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          Email: email
+          email: email
         })
       });
 
@@ -212,7 +212,7 @@ async function initEsqueciSenha() {
       
       // Redirecionar para o login
       setTimeout(() => {
-        go("login-desktop.html");
+        go("/Home/Index");
       }, 2000);
 
     } catch (error) {
@@ -222,7 +222,7 @@ async function initEsqueciSenha() {
       
       // Redirecionar para o login
       setTimeout(() => {
-        go("login-desktop.html");
+        go("/Home/Index");
       }, 2000);
     } finally {
       // Reativar botão
@@ -244,7 +244,7 @@ async function initResetarSenha() {
   if (!token) {
     toast("Token inválido ou em falta.");
     setTimeout(() => {
-      go("login-desktop.html");
+      go("/Home/Index");
     }, 2000);
     return;
   }
@@ -288,8 +288,8 @@ async function initResetarSenha() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          Token: token,
-          NovaSenha: novaSenha
+          token: token,
+          novaSenha: novaSenha
         })
       });
 
@@ -297,7 +297,7 @@ async function initResetarSenha() {
         // 9. Sucesso - mostrar mensagem e redirecionar
         toast("Senha redefinida com sucesso!");
         setTimeout(() => {
-          go("login-desktop.html");
+          go("/Home/Index");
         }, 2000);
       } else {
         // 10. Erro - mostrar mensagem de erro
@@ -354,14 +354,14 @@ async function initRegister() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          NomeCompleto: nomeCompleto,
-          Email: email,
-          Senha: senha
+          nomeCompleto: nomeCompleto,
+          email: email,
+          senha: senha
         })
       });
       if (response.ok) {
         toast("Conta criada com sucesso! Por favor, faça o login.");
-        go("login-desktop.html");
+        go("/Home/Index");
       } else {
         const errorData = await response.json();
         // Tenta extrair a mensagem de erro específica (ex: "Email já está em uso")
@@ -410,7 +410,7 @@ async function initDashboard() {
   const token = sessionStorage.getItem('authToken');
   if (!token) {
     console.log("initDashboard: Token não encontrado, redirecionando para login.");
-    return go("login-desktop.html");
+    return go("/Home/Index");
   }
   console.log("initDashboard: Token encontrado, buscando chamados da API...");
 
@@ -419,7 +419,7 @@ async function initDashboard() {
   const path = window.location.pathname;
 
   // Se for a página do usuário comum, filtrar pelos chamados dele
-  if (path.endsWith("user-dashboard-desktop.html")) {
+  if (path.endsWith("/Home/UserDashboard")) {
     const payload = decodeJWT(token);
     const nameIdentifierClaim = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier";
 
@@ -429,7 +429,7 @@ async function initDashboard() {
       console.log("initDashboard: Página de usuário detectada. Buscando chamados para o Solicitante ID:", userId);
     } else {
       console.error("initDashboard: Não foi possível obter o ID do usuário (solicitante) do token.");
-      return go("login-desktop.html"); // Falha ao ler o token, força o login
+      return go("/Home/Index"); // Falha ao ler o token, força o login
     }
   }
   // --- FIM DA NOVA LÓGICA DE FILTRO ---
@@ -467,7 +467,7 @@ async function initDashboard() {
       console.log("initDashboard: Token inválido (401), redirecionando para login.");
       sessionStorage.removeItem('authToken');
       toast("Sessão expirada. Faça login novamente.");
-      return go("login-desktop.html");
+      return go("/Home/Index");
     } else {
       // Outros erros da API
       console.error('initDashboard: Erro da API:', response.status, response.statusText);
@@ -538,7 +538,7 @@ function renderTicketsTable(chamados, tbody) { // Recebe a lista 'chamados' dire
       const id = btn.dataset.id;
       if (id && id !== '#ERR') {
         sessionStorage.setItem('currentTicketId', id);
-        go("ticket-detalhes-desktop.html");
+        go("/Home/TicketDetalhes");
       } else {
         console.error("Tentativa de abrir chamado com ID inválido.");
         toast("Erro ao tentar abrir detalhes do chamado.");
@@ -562,7 +562,7 @@ async function initNewTicket() {
   if (!token) {
     console.error("--- ERRO: Token não encontrado, redirecionando para login. ---"); // Log 4
     toast("Sessão expirada. Faça login novamente.");
-    return go("login-desktop.html");
+    return go("/Home/Index");
   }
   console.log("--- DEBUG: Token encontrado. Adicionando listener de submit... ---"); // Log 5
   form.addEventListener("submit", async (e) => {
@@ -598,7 +598,7 @@ async function initNewTicket() {
       if (response.ok) {
         const chamadoCriado = await response.json();
         toast(`Chamado #${chamadoCriado.id} criado e classificado com sucesso!`);
-        go("user-dashboard-desktop.html");
+        go("/Home/UserDashboard");
       } else {
         const errorData = await response.json();
         toast(`Erro ao criar chamado: ${errorData.message || 'Tente novamente.'}`);
@@ -625,7 +625,7 @@ async function initTicketDetails() {
     console.error("initTicketDetails: ID do chamado não encontrado no sessionStorage.");
     toast("Chamado não encontrado. Retornando ao dashboard.");
     // Tenta ir para o dashboard do técnico ou do user
-    return go(document.referrer.includes("tecnico") ? "tecnico-dashboard.html" : "user-dashboard-desktop.html"); 
+    return go(document.referrer.includes("tecnico") ? "/Home/TecnicoDashboard" : "/Home/UserDashboard"); 
   }
   console.log("--- DEBUG: ID do chamado encontrado:", ticketId, "---");
   // Verificar se o token de autenticação existe
@@ -633,7 +633,7 @@ async function initTicketDetails() {
   if (!token) {
     console.log("initTicketDetails: Token não encontrado, redirecionando para login.");
     toast("Sessão expirada. Faça login novamente.");
-    return go("login-desktop.html");
+    return go("/Home/Index");
   }
   console.log("--- DEBUG: Token encontrado, buscando detalhes da API ---");
   try {
@@ -760,7 +760,7 @@ async function initTicketDetails() {
                 'Content-Type': 'application/json'
               },
               body: JSON.stringify({
-                Texto: textoComentário
+                texto: textoComentário
               })
             });
 
@@ -940,11 +940,11 @@ async function initTicketDetails() {
       console.log("initTicketDetails: Token inválido (401), redirecionando para login.");
       sessionStorage.removeItem('authToken');
       toast("Sessão expirada. Faça login novamente.");
-      return go("login-desktop.html");
+      return go("/Home/Index");
     } else if (response.status === 404) {
       console.error("initTicketDetails: Chamado não encontrado (404).");
       toast("Chamado não encontrado.");
-      return go(document.referrer.includes("tecnico") ? "tecnico-dashboard.html" : "user-dashboard-desktop.html");
+      return go(document.referrer.includes("tecnico") ? "/Home/TecnicoDashboard" : "/Home/UserDashboard");
     } else {
       console.error('initTicketDetails: Erro da API:', response.status, response.statusText);
       toast("Erro ao carregar detalhes do chamado.");
@@ -975,7 +975,7 @@ function initConfig() {
       // Tenta descobrir para qual dashboard voltar
       const token = sessionStorage.getItem('authToken');
       if (!token) {
-        return go("login-desktop.html"); // Segurança: se não há token, vai para o login
+        return go("/Home/Index"); // Segurança: se não há token, vai para o login
       }
       
       const payload = decodeJWT(token);
@@ -988,11 +988,11 @@ function initConfig() {
       }
       // Redireciona com base no TipoUsuario lido do token
       if (tipoUsuario === 3) {
-        go("admin-dashboard-desktop.html");
+        go("/Home/AdminDashboard");
       } else if (tipoUsuario === 2) {
-        go("tecnico-dashboard.html");
+        go("/Home/TecnicoDashboard");
       } else {
-        go("user-dashboard-desktop.html");
+        go("/Home/UserDashboard");
       }
     });
   }
@@ -1045,7 +1045,7 @@ async function initTecnicoDashboard() {
   const token = sessionStorage.getItem("authToken");
   if (!token) {
     console.log("--- DEBUG: Token NÃO encontrado, redirecionando para login ---"); // Log 2
-    go("login-desktop.html");
+    go("/Home/Index");
     return;
   }
   console.log("--- DEBUG: Token encontrado ---"); // Log 3
@@ -1117,7 +1117,7 @@ async function initTecnicoDashboard() {
     if (error.message.includes("Token expirado")) {
         sessionStorage.removeItem("authToken");
         toast("Sessão expirada. Faça login novamente.");
-        go("login-desktop.html");
+        go("/Home/Index");
     } else {
         toast("Erro ao carregar dados. Verifique o console para detalhes.");
     }
@@ -1221,7 +1221,7 @@ function renderTabelaMeusChamados(chamados, tbody) {
       const id = btn.dataset.id;
       if (id && id !== '#ERR') {
         sessionStorage.setItem('currentTicketId', id);
-        go("tecnico-detalhes-desktop.html");
+        go("/Home/TecnicoDetalhes");
       } else {
         console.error("Tentativa de ver detalhes com ID inválido.");
         toast("Erro ao tentar abrir detalhes do chamado.");
@@ -1288,7 +1288,7 @@ async function assumirChamado(chamadoId) {
       // Token expirado
       sessionStorage.removeItem('authToken');
       toast("Sessão expirada. Faça login novamente.");
-      go("login-desktop.html");
+      go("/Home/Index");
     } else {
       // Outros erros (400, 404, 500)
       console.error('Erro ao assumir chamado:', response.status, response.statusText);
@@ -1406,7 +1406,7 @@ async function initAdminTicketsPage() {
   console.log("--- DEBUG: Entrando em initAdminTicketsPage ---");
   const token = sessionStorage.getItem("authToken");
   if (!token) {
-    go("login-desktop.html");
+    go("/Home/Index");
     return;
   }
 
@@ -1560,7 +1560,7 @@ function logout() {
   sessionStorage.removeItem("authToken");
   sessionStorage.removeItem("currentTicketId");
   localStorage.removeItem("user");
-  go("login-desktop.html");
+  go("/Home/Index");
 }
 
 /* ===========================================================
@@ -1573,14 +1573,14 @@ async function initCadastrarTecnico() {
   const token = sessionStorage.getItem('authToken');
   if (!token) {
     toast("Acesso negado. Token não encontrado.");
-    go("login-desktop.html");
+    go("/Home/Index");
     return;
   }
 
   const payload = decodeJWT(token);
   if (!payload) {
     toast("Acesso negado. Token inválido.");
-    go("login-desktop.html");
+    go("/Home/Index");
     return;
   }
 
@@ -1592,7 +1592,7 @@ async function initCadastrarTecnico() {
   
   if (tipoUsuario !== "3") {
     toast("Acesso negado. Apenas administradores podem cadastrar técnicos.");
-    go("login-desktop.html");
+    go("/Home/Index");
     return;
   }
 
@@ -1712,7 +1712,7 @@ async function initCadastrarTecnico() {
             toast("Dados inválidos. Verifique os campos e tente novamente.");
           } else if (response.status === 401) {
             toast("Acesso negado. Faça login novamente.");
-            go("login-desktop.html");
+            go("/Home/Index");
           } else {
             toast("Erro ao registar técnico. Tente novamente.");
           }
