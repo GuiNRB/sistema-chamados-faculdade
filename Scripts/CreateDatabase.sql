@@ -136,4 +136,12 @@ VALUES
     ('Administrador Neuro Help', 'admin@helpdesk.com', '$2a$11$7Wm1iN97aWdOZpK0IptKiOqE6rW1MikaR9Jv66YE.TJLDJ/Qce/BS', 3, NULL, 1);
 GO
 
+-- Inserindo usuário adicional para testes (Tipo 3 - Admin)
+-- A senha é 'senha123'
+INSERT INTO dbo.Usuarios 
+    (NomeCompleto, Email, SenhaHash, TipoUsuario, EspecialidadeCategoriaId, Ativo)
+VALUES 
+    ('Admin Teste', 'admin.teste@helpdesk.com', '$2b$12$wqv6kUMRTlLMvjaAB45X4uyD0Y.2MB7UzU2DxHZSZETKNtzcqHij2', 3, NULL, 1);
+GO
+
 PRINT 'Banco de dados para o sistema de chamados (Versão Final) criado com sucesso!';

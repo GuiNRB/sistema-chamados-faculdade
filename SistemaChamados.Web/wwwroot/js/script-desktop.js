@@ -54,7 +54,7 @@ applyInitialTheme();
 // ===========================================================
 
 /* URL base da API */
-const API_BASE = "http://localhost:5246";
+const API_BASE = "";
 /* URL base da aplicação web */
 const WEB_BASE = "";
 
@@ -108,15 +108,18 @@ const WEB_BASE = "";
    🔐 LOGIN
    =========================================================== */
 function initLogin() {
+  console.log("initLogin chamada");
   const form = $("#login-form");
+  console.log("Formulário encontrado:", form);
   if (!form) return;
 
   form.addEventListener("submit", async (e) => {
+    console.log("Formulário submetido");
     e.preventDefault();
 
     const email = $("#email").value.trim().toLowerCase();
     const password = $("#password").value.trim();
-    console.log("Senha lida do campo:", password);
+    console.log("Email:", email, "Senha:", password);
     if (!email || !password) return toast("Preencha todos os campos.");
 
     try {
@@ -134,13 +137,25 @@ function initLogin() {
       if (response.ok) {
         const data = await response.json();
         
-        if (data.success) {
-          toast("Login realizado com sucesso!");
-          
-          // Redirecionar para a URL fornecida pelo servidor
+        // Guardar o token no sessionStorage
+        if (data.token) {
+          sessionStorage.setItem('authToken', data.token);
+        }
+        
+        toast("Login realizado com sucesso!");
+        
+        // Redirecionar para a URL fornecida pelo servidor
+        if (data.success && data.redirectUrl) {
           window.location.href = data.redirectUrl;
         } else {
-          toast(data.message || "Erro no login.");
+          // Fallback: determinar redirecionamento baseado no tipo de usuário
+          if (data.tipoUsuario === 3) { // Admin
+            window.location.href = "/Home/AdminDashboard";
+          } else if (data.tipoUsuario === 2) { // Técnico
+            window.location.href = "/Home/TecnicoDashboard";
+          } else { // Usuário Comum (TipoUsuario 1 ou outro)
+            window.location.href = "/Home/UserDashboard";
+          }
         }
       } else {
         // Tratar erro de autenticação
@@ -192,7 +207,7 @@ async function initEsqueciSenha() {
     submitBtn.textContent = "Enviando...";
 
     try {
-      const response = await fetch(`${API_BASE}/api/usuarios/esqueci-senha`, {
+      const response = await fetch(`${API_BASE}/Home/EsqueciSenha`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -207,7 +222,7 @@ async function initEsqueciSenha() {
       
       // Redirecionar para o login
       setTimeout(() => {
-        go("/Home/Index");
+        go("login-desktop.html");
       }, 2000);
 
     } catch (error) {
@@ -217,7 +232,7 @@ async function initEsqueciSenha() {
       
       // Redirecionar para o login
       setTimeout(() => {
-        go("/Home/Index");
+        go("login-desktop.html");
       }, 2000);
     } finally {
       // Reativar botão
@@ -239,7 +254,7 @@ async function initResetarSenha() {
   if (!token) {
     toast("Token inválido ou em falta.");
     setTimeout(() => {
-      go("/Home/Index");
+      go("login-desktop.html");
     }, 2000);
     return;
   }
@@ -277,7 +292,7 @@ async function initResetarSenha() {
 
     try {
       // 8. Fazer chamada para a API
-      const response = await fetch(`${API_BASE}/api/usuarios/resetar-senha`, {
+      const response = await fetch(`${API_BASE}/Home/ResetarSenha`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -292,7 +307,7 @@ async function initResetarSenha() {
         // 9. Sucesso - mostrar mensagem e redirecionar
         toast("Senha redefinida com sucesso!");
         setTimeout(() => {
-          go("/Home/Index");
+          go("login-desktop.html");
         }, 2000);
       } else {
         // 10. Erro - mostrar mensagem de erro
@@ -343,7 +358,7 @@ async function initRegister() {
     submitButton.disabled = true;
     submitButton.textContent = "A registar...";
     try {
-      const response = await fetch(`${WEB_BASE}/Auth/Register`, {
+      const response = await fetch(`${API_BASE}/Home/Cadastro`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -351,18 +366,16 @@ async function initRegister() {
         body: JSON.stringify({
           NomeCompleto: nomeCompleto,
           Email: email,
-          Senha: senha,
-          ConfirmarSenha: confirmarSenha
+          Senha: senha
         })
       });
-      
-      const data = await response.json();
-      
-      if (response.ok && data.success) {
-        toast(data.message || "Conta criada com sucesso! Por favor, faça o login.");
-        go("/Home/Index");
+      if (response.ok) {
+        toast("Conta criada com sucesso! Por favor, faça o login.");
+        go("login-desktop.html");
       } else {
-        const errorMessage = data?.message || "Erro ao criar conta.";
+        const errorData = await response.json();
+        // Tenta extrair a mensagem de erro específica (ex: "Email já está em uso")
+        const errorMessage = errorData?.message || errorData?.title || "Erro ao criar conta.";
         toast(errorMessage);
       }
     } catch (error) {
@@ -407,26 +420,26 @@ async function initDashboard() {
   const token = sessionStorage.getItem('authToken');
   if (!token) {
     console.log("initDashboard: Token não encontrado, redirecionando para login.");
-    return go("/Home/Index");
+    return go("login-desktop.html");
   }
   console.log("initDashboard: Token encontrado, buscando chamados da API...");
 
   // --- INÍCIO DA NOVA LÓGICA DE FILTRO ---
-  let url = `${API_BASE}/api/chamados`; // URL padrão (para Admin)
+  let url = `${API_BASE}/Chamados`; // URL padrão (para Admin)
   const path = window.location.pathname;
 
   // Se for a página do usuário comum, filtrar pelos chamados dele
-  if (path.endsWith("/Home/UserDashboard")) {
+  if (path.endsWith("user-dashboard-desktop.html")) {
     const payload = decodeJWT(token);
     const nameIdentifierClaim = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier";
 
     if (payload && payload[nameIdentifierClaim]) {
       const userId = parseInt(payload[nameIdentifierClaim]);
-      url = `${API_BASE}/api/chamados?solicitanteId=${userId}`; // Adiciona o filtro
+      url = `${API_BASE}/Chamados?solicitanteId=${userId}`; // Adiciona o filtro
       console.log("initDashboard: Página de usuário detectada. Buscando chamados para o Solicitante ID:", userId);
     } else {
       console.error("initDashboard: Não foi possível obter o ID do usuário (solicitante) do token.");
-      return go("/Home/Index"); // Falha ao ler o token, força o login
+      return go("login-desktop.html"); // Falha ao ler o token, força o login
     }
   }
   // --- FIM DA NOVA LÓGICA DE FILTRO ---
@@ -464,7 +477,7 @@ async function initDashboard() {
       console.log("initDashboard: Token inválido (401), redirecionando para login.");
       sessionStorage.removeItem('authToken');
       toast("Sessão expirada. Faça login novamente.");
-      return go("/Home/Index");
+      return go("login-desktop.html");
     } else {
       // Outros erros da API
       console.error('initDashboard: Erro da API:', response.status, response.statusText);
@@ -535,7 +548,7 @@ function renderTicketsTable(chamados, tbody) { // Recebe a lista 'chamados' dire
       const id = btn.dataset.id;
       if (id && id !== '#ERR') {
         sessionStorage.setItem('currentTicketId', id);
-        go("/Home/TicketDetalhes");
+        go("ticket-detalhes-desktop.html");
       } else {
         console.error("Tentativa de abrir chamado com ID inválido.");
         toast("Erro ao tentar abrir detalhes do chamado.");
@@ -559,7 +572,7 @@ async function initNewTicket() {
   if (!token) {
     console.error("--- ERRO: Token não encontrado, redirecionando para login. ---"); // Log 4
     toast("Sessão expirada. Faça login novamente.");
-    return go("/Home/Index");
+    return go("login-desktop.html");
   }
   console.log("--- DEBUG: Token encontrado. Adicionando listener de submit... ---"); // Log 5
   form.addEventListener("submit", async (e) => {
@@ -580,7 +593,7 @@ async function initNewTicket() {
     submitButton.textContent = "Analisando...";
     console.log("--- DEBUG: Botão desabilitado. A iniciar fetch... ---"); // Log 10
     try {
-      const response = await fetch(`${API_BASE}/api/chamados/analisar`, {
+      const response = await fetch(`${API_BASE}/Chamados`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -595,7 +608,7 @@ async function initNewTicket() {
       if (response.ok) {
         const chamadoCriado = await response.json();
         toast(`Chamado #${chamadoCriado.id} criado e classificado com sucesso!`);
-        go("/Home/UserDashboard");
+        go("user-dashboard-desktop.html");
       } else {
         const errorData = await response.json();
         toast(`Erro ao criar chamado: ${errorData.message || 'Tente novamente.'}`);
@@ -622,7 +635,7 @@ async function initTicketDetails() {
     console.error("initTicketDetails: ID do chamado não encontrado no sessionStorage.");
     toast("Chamado não encontrado. Retornando ao dashboard.");
     // Tenta ir para o dashboard do técnico ou do user
-    return go(document.referrer.includes("tecnico") ? "/Home/TecnicoDashboard" : "/Home/UserDashboard"); 
+    return go(document.referrer.includes("tecnico") ? "tecnico-dashboard.html" : "user-dashboard-desktop.html"); 
   }
   console.log("--- DEBUG: ID do chamado encontrado:", ticketId, "---");
   // Verificar se o token de autenticação existe
@@ -630,12 +643,12 @@ async function initTicketDetails() {
   if (!token) {
     console.log("initTicketDetails: Token não encontrado, redirecionando para login.");
     toast("Sessão expirada. Faça login novamente.");
-    return go("/Home/Index");
+    return go("login-desktop.html");
   }
   console.log("--- DEBUG: Token encontrado, buscando detalhes da API ---");
   try {
     // Buscar os detalhes do chamado da API
-    const url = `${API_BASE}/api/chamados/${ticketId}`;
+    const url = `${API_BASE}/Chamados/${ticketId}`;
     console.log("--- DEBUG: Fetching URL:", url, "---");
     const response = await fetch(url, {
       method: 'GET',
@@ -708,7 +721,7 @@ async function initTicketDetails() {
       
       // Buscar e preencher os Status disponíveis
       try {
-        const statusResponse = await fetch(`${API_BASE}/api/status`, {
+        const statusResponse = await fetch(`${API_BASE}/Status`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         if (statusResponse.ok) {
@@ -750,7 +763,7 @@ async function initTicketDetails() {
           submitButton.textContent = "Enviando...";
 
           try {
-            const postResponse = await fetch(`${API_BASE}/api/chamados/${ticketId}/comentarios`, {
+            const postResponse = await fetch(`${API_BASE}/Chamados/${ticketId}/comentarios`, {
               method: 'POST',
               headers: {
                 'Authorization': `Bearer ${token}`,
@@ -788,7 +801,7 @@ async function initTicketDetails() {
           const tecnicoId = chamado.tecnicoId; // Pega o tecnicoId do chamado atual
           console.log(`Atualizando chamado ${ticketId} para Status ID: ${novoStatusId}`);
           try {
-            const updateResponse = await fetch(`${API_BASE}/api/chamados/${ticketId}`, {
+            const updateResponse = await fetch(`${API_BASE}/Chamados/${ticketId}`, {
               method: 'PUT',
               headers: {
                 'Authorization': `Bearer ${token}`,
@@ -837,7 +850,7 @@ async function initTicketDetails() {
           if (!selectTecnico) return;
 
           try {
-            const tecnicosResponse = await fetch(`${API_BASE}/api/usuarios/tecnicos`, {
+            const tecnicosResponse = await fetch(`${API_BASE}/Usuarios`, {
               method: 'GET',
               headers: { 'Authorization': `Bearer ${token}` }
             });
@@ -896,7 +909,7 @@ async function initTicketDetails() {
             console.log(`Admin atualizando Chamado ${ticketId} - Novo Técnico ID: ${novoTecnicoId}, Status ID Atual: ${statusIdAtual}`);
 
             try {
-              const updateResponse = await fetch(`${API_BASE}/api/chamados/${ticketId}`, {
+              const updateResponse = await fetch(`${API_BASE}/Chamados/${ticketId}`, {
                 method: 'PUT',
                 headers: {
                   'Authorization': `Bearer ${token}`,
@@ -937,11 +950,11 @@ async function initTicketDetails() {
       console.log("initTicketDetails: Token inválido (401), redirecionando para login.");
       sessionStorage.removeItem('authToken');
       toast("Sessão expirada. Faça login novamente.");
-      return go("/Home/Index");
+      return go("login-desktop.html");
     } else if (response.status === 404) {
       console.error("initTicketDetails: Chamado não encontrado (404).");
       toast("Chamado não encontrado.");
-      return go(document.referrer.includes("tecnico") ? "/Home/TecnicoDashboard" : "/Home/UserDashboard");
+      return go(document.referrer.includes("tecnico") ? "tecnico-dashboard.html" : "user-dashboard-desktop.html");
     } else {
       console.error('initTicketDetails: Erro da API:', response.status, response.statusText);
       toast("Erro ao carregar detalhes do chamado.");
@@ -972,7 +985,7 @@ function initConfig() {
       // Tenta descobrir para qual dashboard voltar
       const token = sessionStorage.getItem('authToken');
       if (!token) {
-        return go("/Home/Index"); // Segurança: se não há token, vai para o login
+        return go("login-desktop.html"); // Segurança: se não há token, vai para o login
       }
       
       const payload = decodeJWT(token);
@@ -985,11 +998,11 @@ function initConfig() {
       }
       // Redireciona com base no TipoUsuario lido do token
       if (tipoUsuario === 3) {
-        go("/Home/AdminDashboard");
+        go("admin-dashboard-desktop.html");
       } else if (tipoUsuario === 2) {
-        go("/Home/TecnicoDashboard");
+        go("tecnico-dashboard.html");
       } else {
-        go("/Home/UserDashboard");
+        go("user-dashboard-desktop.html");
       }
     });
   }
@@ -1042,7 +1055,7 @@ async function initTecnicoDashboard() {
   const token = sessionStorage.getItem("authToken");
   if (!token) {
     console.log("--- DEBUG: Token NÃO encontrado, redirecionando para login ---"); // Log 2
-    go("/Home/Index");
+    go("login-desktop.html");
     return;
   }
   console.log("--- DEBUG: Token encontrado ---"); // Log 3
@@ -1065,7 +1078,7 @@ async function initTecnicoDashboard() {
   console.log("--- DEBUG: Headers para fetch definidos ---"); // Log 6
   try {
     // 1. Buscar chamados não atribuídos
-    const urlFila = `${API_BASE}/api/chamados?tecnicoId=0&statusId=1`;
+    const urlFila = `${API_BASE}/Chamados?tecnicoId=0&statusId=1`;
     console.log("--- DEBUG: Iniciando fetch para FILA:", urlFila, "---"); // Log 7
     const filaResponse = await fetch(urlFila, { method: "GET", headers: headers });
     console.log("--- DEBUG: Resposta fetch FILA recebida. Status:", filaResponse.status, "---"); // Log 8
@@ -1087,7 +1100,7 @@ async function initTecnicoDashboard() {
         console.error("--- ERRO: tecnicoId inválido para buscar 'Meus Chamados'. Abortando. ---"); // Log 12
         return; // Interrompe se não temos ID válido
     }
-    const urlMeus = `${API_BASE}/api/chamados?tecnicoId=${tecnicoId}`;
+    const urlMeus = `${API_BASE}/Chamados?tecnicoId=${tecnicoId}`;
     console.log("--- DEBUG: Iniciando fetch para MEUS CHAMADOS:", urlMeus, "---"); // Log 13
     const meusResponse = await fetch(urlMeus, { method: "GET", headers: headers });
     console.log("--- DEBUG: Resposta fetch MEUS CHAMADOS recebida. Status:", meusResponse.status, "---"); // Log 14
@@ -1114,7 +1127,7 @@ async function initTecnicoDashboard() {
     if (error.message.includes("Token expirado")) {
         sessionStorage.removeItem("authToken");
         toast("Sessão expirada. Faça login novamente.");
-        go("/Home/Index");
+        go("login-desktop.html");
     } else {
         toast("Erro ao carregar dados. Verifique o console para detalhes.");
     }
@@ -1218,7 +1231,7 @@ function renderTabelaMeusChamados(chamados, tbody) {
       const id = btn.dataset.id;
       if (id && id !== '#ERR') {
         sessionStorage.setItem('currentTicketId', id);
-        go("/Home/TecnicoDetalhes");
+        go("tecnico-detalhes-desktop.html");
       } else {
         console.error("Tentativa de ver detalhes com ID inválido.");
         toast("Erro ao tentar abrir detalhes do chamado.");
@@ -1267,7 +1280,7 @@ async function assumirChamado(chamadoId) {
     console.log("Enviando requisição para assumir chamado:", { chamadoId, body });
     
     // Fazer a chamada fetch para o endpoint PUT
-    const response = await fetch(`${API_BASE}/api/chamados/${chamadoId}`, {
+    const response = await fetch(`${API_BASE}/Chamados/${chamadoId}`, {
       method: 'PUT',
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -1285,7 +1298,7 @@ async function assumirChamado(chamadoId) {
       // Token expirado
       sessionStorage.removeItem('authToken');
       toast("Sessão expirada. Faça login novamente.");
-      go("/Home/Index");
+      go("login-desktop.html");
     } else {
       // Outros erros (400, 404, 500)
       console.error('Erro ao assumir chamado:', response.status, response.statusText);
@@ -1314,7 +1327,7 @@ async function fetchAndRenderComments(ticketId, token) {
   list.innerHTML = `<li class="help">Carregando comentários...</li>`;
 
   try {
-    const response = await fetch(`${API_BASE}/api/chamados/${ticketId}/comentarios`, {
+    const response = await fetch(`${API_BASE}/Chamados/${ticketId}/comentarios`, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${token}`
@@ -1403,7 +1416,7 @@ async function initAdminTicketsPage() {
   console.log("--- DEBUG: Entrando em initAdminTicketsPage ---");
   const token = sessionStorage.getItem("authToken");
   if (!token) {
-    go("/Home/Index");
+    go("login-desktop.html");
     return;
   }
 
@@ -1424,7 +1437,7 @@ async function initAdminTicketsPage() {
   async function populateFilterDropdowns() {
     try {
       // 1. Buscar Status
-      const statusResponse = await fetch(`${API_BASE}/api/status`, {
+      const statusResponse = await fetch(`${API_BASE}/Status`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (statusResponse.ok) {
@@ -1438,7 +1451,7 @@ async function initAdminTicketsPage() {
       }
 
       // 2. Buscar Prioridades
-      const prioResponse = await fetch(`${API_BASE}/api/prioridades`, {
+      const prioResponse = await fetch(`${API_BASE}/Prioridades`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (prioResponse.ok) {
@@ -1470,7 +1483,7 @@ async function initAdminTicketsPage() {
     if (prioridadeId) params.append("prioridadeId", prioridadeId);
     if (termoBusca) params.append("termoBusca", termoBusca);
 
-    const url = `${API_BASE}/api/chamados?${params.toString()}`;
+    const url = `${API_BASE}/Chamados?${params.toString()}`;
     console.log("--- DEBUG: Buscando URL de filtros:", url, "---");
 
     tableBody.innerHTML = `<tr><td colspan="6" style="text-align:center;">Carregando...</td></tr>`;
@@ -1543,7 +1556,27 @@ function initThemeSwitcher() {
    🧭 NAVEGAÇÃO GLOBAL
    =========================================================== */
 function go(page) {
-  window.location.href = page;
+  // Mapeamento de páginas desktop para rotas MVC
+  const pageMap = {
+    'login-desktop.html': '/Home/Login',
+    'cadastro-desktop.html': '/Home/Cadastro',
+    'esqueci-senha-desktop.html': '/Home/EsqueciSenha',
+    'resetar-senha-desktop.html': '/Home/ResetarSenha',
+    'admin-dashboard.html': '/Admin/Dashboard',
+    'user-dashboard.html': '/User/Dashboard',
+    'tecnico-dashboard.html': '/Tecnico/Dashboard',
+    'abrir-chamado.html': '/User/AbrirChamado',
+    'meus-chamados.html': '/User/MeusChamados',
+    'detalhes-chamado.html': '/Chamados/Detalhes',
+    'gerenciar-chamados.html': '/Admin/GerenciarChamados',
+    'gerenciar-usuarios.html': '/Admin/GerenciarUsuarios',
+    'gerenciar-categorias.html': '/Admin/GerenciarCategorias',
+    'cadastrar-tecnico.html': '/Admin/CadastrarTecnico',
+    'relatorios.html': '/Admin/Relatorios'
+  };
+  
+  const route = pageMap[page] || page;
+  window.location.href = route;
 }
 
 /* Botão de voltar */
@@ -1557,7 +1590,7 @@ function logout() {
   sessionStorage.removeItem("authToken");
   sessionStorage.removeItem("currentTicketId");
   localStorage.removeItem("user");
-  go("/Home/Index");
+  go("login-desktop.html");
 }
 
 /* ===========================================================
@@ -1570,14 +1603,14 @@ async function initCadastrarTecnico() {
   const token = sessionStorage.getItem('authToken');
   if (!token) {
     toast("Acesso negado. Token não encontrado.");
-    go("/Home/Index");
+    go("login-desktop.html");
     return;
   }
 
   const payload = decodeJWT(token);
   if (!payload) {
     toast("Acesso negado. Token inválido.");
-    go("/Home/Index");
+    go("login-desktop.html");
     return;
   }
 
@@ -1589,14 +1622,14 @@ async function initCadastrarTecnico() {
   
   if (tipoUsuario !== "3") {
     toast("Acesso negado. Apenas administradores podem cadastrar técnicos.");
-    go("/Home/Index");
+    go("login-desktop.html");
     return;
   }
 
   // c. Preencher o Dropdown de Especialidades
   try {
     console.log("--- DEBUG: Carregando categorias ---");
-    const response = await fetch(`${API_BASE}/api/categorias`, {
+    const response = await fetch(`${API_BASE}/Categorias`, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -1682,7 +1715,7 @@ async function initCadastrarTecnico() {
       
       try {
         // Fazer chamada para a API
-        const response = await fetch(`${API_BASE}/api/usuarios/registrar-tecnico`, {
+        const response = await fetch(`${API_BASE}/Home/CadastrarTecnico`, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -1709,7 +1742,7 @@ async function initCadastrarTecnico() {
             toast("Dados inválidos. Verifique os campos e tente novamente.");
           } else if (response.status === 401) {
             toast("Acesso negado. Faça login novamente.");
-            go("/Home/Index");
+            go("login-desktop.html");
           } else {
             toast("Erro ao registar técnico. Tente novamente.");
           }
@@ -1739,70 +1772,52 @@ function initPasswordToggles() {
 }
 
 /* ===========================================================
-   🚀 INICIALIZAÇÃO GLOBAL (V2 - MODO ASP.NET)
+   🚀 INICIALIZAÇÃO GLOBAL
    =========================================================== */
 document.addEventListener("DOMContentLoaded", () => {
-  // No ASP.NET MVC, o path será /Home/ActionName
-  // Ex: /Home/Index, /Home/AdminDashboard, /
-  const path = window.location.pathname.toLowerCase();
+  const path = window.location.pathname;
 
-  // Aplica o tema (light/dark) em todas as páginas
-  try {
-    applyInitialTheme();
-  } catch(e) { console.error("Falha ao aplicar tema inicial", e); }
-
-  // Atualiza a saudação em todas as páginas (exceto login/registo)
-  if (!path.endsWith("/") && !path.endsWith("/home/index") && !path.endsWith("/home/cadastro") && !path.endsWith("/home/esquecisenha") && !path.endsWith("/home/resetarsenha")) {
-    atualizarSaudacaoUsuario();
-    initConfig(); // Para que o "Sair" e "Voltar" funcionem em todas as páginas
-  }
-
-  // Roteador de Página: Decide qual função de inicialização chamar
-
-  // --- Autenticação ---
-  if (path.endsWith("/") || path.endsWith("/home/index")) {
+  if (path.endsWith("login-desktop.html") || path === "/" || path.endsWith("/Home/Index") || path.endsWith("/Home/Login")) {
     initLogin();
     initPasswordToggles();
-  } else if (path.endsWith("/home/cadastro")) {
-    initRegister();
-    initPasswordToggles(); // Para os campos de senha no registo
-  } else if (path.endsWith("/home/esquecisenha")) {
+  } else if (path.endsWith("esqueci-senha-desktop.html")) {
     initEsqueciSenha();
-  } else if (path.endsWith("/home/resetarsenha")) {
-    initResetarSenha(); // Esta função já lê o token da URL
-  } 
-
-  // --- Dashboards ---
-  else if (path.endsWith("/home/admindashboard")) {
-    initDashboard(); 
-  } else if (path.endsWith("/home/userdashboard")) {
+  } else if (path.endsWith("resetar-senha-desktop.html")) {
+    initResetarSenha();
+  } else if (path.endsWith("admin-dashboard-desktop.html")) {
     initDashboard();
-  } else if (path.endsWith("/home/tecnicodashboard")) {
-    initTecnicoDashboard(); 
-  }
-
-  // --- Páginas Internas ---
-  else if (path.endsWith("/home/novoticket")) {
+    initConfig();
+    atualizarSaudacaoUsuario(); // <-- CHAMADA ADICIONADA
+  } else if (path.endsWith("user-dashboard-desktop.html")) {
+    initDashboard();
+    initConfig();
+    atualizarSaudacaoUsuario(); // <-- CHAMADA ADICIONADA
+  } else if (path.endsWith("cadastro-desktop.html")) {
+    initRegister();
+  } else if (path.endsWith("novo-ticket-desktop.html")) {
     initNewTicket();
-  } else if (path.endsWith("/home/ticketdetalhes")) {
+  } else if (path.endsWith("ticket-detalhes-desktop.html")) {
     initTicketDetails();
-  } else if (path.endsWith("/home/tecnicodetalhes")) {
-    initTicketDetails(); // Reutiliza a mesma função
-  }
-
-  // --- Páginas de Admin ---
-  else if (path.endsWith("/home/admintickets")) {
-    initAdminTicketsPage();
-  } else if (path.endsWith("/home/admincadastrartecnico")) {
+  } else if (path.endsWith("tecnico-detalhes-desktop.html")) {
+    initTicketDetails(); // Reutiliza a mesma função de detalhes
+  } else if (path.endsWith("config-desktop.html")) { // Página do Utilizador Comum
+    initConfig();
+    atualizarSaudacaoUsuario();
+    initThemeSwitcher(); // <-- ADICIONAR ESTA LINHA
+  } else if (path.endsWith("tecnico-config-desktop.html")) { // Página do Técnico
+    initConfig();
+    atualizarSaudacaoUsuario();
+    initThemeSwitcher(); // <-- ADICIONAR ESTA LINHA
+  } else if (path.endsWith("tecnico-dashboard.html")) {
+    initTecnicoDashboard(); 
+    initConfig(); // Mantém o logout
+    atualizarSaudacaoUsuario(); // <-- CHAMADA ADICIONADA
+  } else if (path.endsWith("admin-cadastrar-tecnico.html")) {
     initCadastrarTecnico();
-    initPasswordToggles(); // Para os campos de senha do técnico
-  }
-
-  // --- Configurações ---
-  else if (path.endsWith("/home/config")) {
-    initThemeSwitcher(); // Ativa o botão de Dark Mode
-  } else if (path.endsWith("/home/tecnicoconfig")) {
-    initThemeSwitcher(); // Ativa o botão de Dark Mode
+    initConfig(); // Mantém o logout
+  } else if (path.endsWith("admin-tickets-desktop.html")) { // <-- ADICIONAR ESTE BLOCO
+    initAdminTicketsPage();
+    initConfig(); // Para o logout funcionar
   }
 });
 

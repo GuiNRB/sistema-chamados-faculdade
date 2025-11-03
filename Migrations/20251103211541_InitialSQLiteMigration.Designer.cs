@@ -2,7 +2,6 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SistemaChamados.Data;
@@ -12,45 +11,39 @@ using SistemaChamados.Data;
 namespace SistemaChamados.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251103200809_InitialSQLServerMigration")]
-    partial class InitialSQLServerMigration
+    [Migration("20251103211541_InitialSQLiteMigration")]
+    partial class InitialSQLiteMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.0")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128);
-
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+            modelBuilder.HasAnnotation("ProductVersion", "8.0.0");
 
             modelBuilder.Entity("SistemaChamados.Core.Entities.Categoria", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("INTEGER");
 
                     b.Property<bool>("Ativo")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
+                        .HasColumnType("INTEGER")
                         .HasDefaultValue(true);
 
                     b.Property<DateTime>("DataCadastro")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
+                        .HasColumnType("TEXT")
                         .HasDefaultValueSql("GETDATE()");
 
                     b.Property<string>("Descricao")
                         .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Nome")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
@@ -61,47 +54,45 @@ namespace SistemaChamados.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("CategoriaId")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("DataAbertura")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
+                        .HasColumnType("TEXT")
                         .HasDefaultValueSql("GETDATE()");
 
                     b.Property<DateTime?>("DataFechamento")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("TEXT");
 
                     b.Property<DateTime?>("DataUltimaAtualizacao")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Descricao")
                         .IsRequired()
-                        .HasColumnType("NVARCHAR(MAX)");
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("PrioridadeId")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<DateTime?>("SlaDataExpiracao")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("SolicitanteId")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("StatusId")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int?>("TecnicoId")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Titulo")
                         .IsRequired()
                         .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
@@ -122,25 +113,23 @@ namespace SistemaChamados.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("ChamadoId")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("DataCriacao")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
+                        .HasColumnType("TEXT")
                         .HasDefaultValueSql("GETDATE()");
 
                     b.Property<string>("Texto")
                         .IsRequired()
                         .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("UsuarioId")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
@@ -155,31 +144,29 @@ namespace SistemaChamados.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("INTEGER");
 
                     b.Property<bool>("Ativo")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
+                        .HasColumnType("INTEGER")
                         .HasDefaultValue(true);
 
                     b.Property<DateTime>("DataCadastro")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
+                        .HasColumnType("TEXT")
                         .HasDefaultValueSql("GETDATE()");
 
                     b.Property<string>("Descricao")
                         .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("Nivel")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Nome")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
@@ -190,28 +177,26 @@ namespace SistemaChamados.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("INTEGER");
 
                     b.Property<bool>("Ativo")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
+                        .HasColumnType("INTEGER")
                         .HasDefaultValue(true);
 
                     b.Property<DateTime>("DataCadastro")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
+                        .HasColumnType("TEXT")
                         .HasDefaultValueSql("GETDATE()");
 
                     b.Property<string>("Descricao")
                         .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Nome")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
@@ -222,47 +207,45 @@ namespace SistemaChamados.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("INTEGER");
 
                     b.Property<bool>("Ativo")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
+                        .HasColumnType("INTEGER")
                         .HasDefaultValue(true);
 
                     b.Property<DateTime>("DataCadastro")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
+                        .HasColumnType("TEXT")
                         .HasDefaultValueSql("GETDATE()");
 
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)");
+                        .HasColumnType("TEXT");
 
                     b.Property<int?>("EspecialidadeCategoriaId")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("NomeCompleto")
                         .IsRequired()
                         .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("PasswordResetToken")
                         .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("TEXT");
 
                     b.Property<DateTime?>("ResetTokenExpires")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("SenhaHash")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("TipoUsuario")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 

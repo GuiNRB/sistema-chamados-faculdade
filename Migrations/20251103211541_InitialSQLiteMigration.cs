@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace SistemaChamados.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialSQLServerMigration : Migration
+    public partial class InitialSQLiteMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -15,12 +15,12 @@ namespace SistemaChamados.Migrations
                 name: "Categorias",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Nome = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Descricao = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
-                    Ativo = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
-                    DataCadastro = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()")
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Nome = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
+                    Descricao = table.Column<string>(type: "TEXT", maxLength: 500, nullable: true),
+                    Ativo = table.Column<bool>(type: "INTEGER", nullable: false, defaultValue: true),
+                    DataCadastro = table.Column<DateTime>(type: "TEXT", nullable: false, defaultValueSql: "GETDATE()")
                 },
                 constraints: table =>
                 {
@@ -31,13 +31,13 @@ namespace SistemaChamados.Migrations
                 name: "Prioridades",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Nome = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Descricao = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
-                    Nivel = table.Column<int>(type: "int", nullable: false),
-                    Ativo = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
-                    DataCadastro = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()")
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Nome = table.Column<string>(type: "TEXT", maxLength: 50, nullable: false),
+                    Descricao = table.Column<string>(type: "TEXT", maxLength: 200, nullable: true),
+                    Nivel = table.Column<int>(type: "INTEGER", nullable: false),
+                    Ativo = table.Column<bool>(type: "INTEGER", nullable: false, defaultValue: true),
+                    DataCadastro = table.Column<DateTime>(type: "TEXT", nullable: false, defaultValueSql: "GETDATE()")
                 },
                 constraints: table =>
                 {
@@ -48,12 +48,12 @@ namespace SistemaChamados.Migrations
                 name: "Status",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Nome = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Descricao = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
-                    Ativo = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
-                    DataCadastro = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()")
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Nome = table.Column<string>(type: "TEXT", maxLength: 50, nullable: false),
+                    Descricao = table.Column<string>(type: "TEXT", maxLength: 200, nullable: true),
+                    Ativo = table.Column<bool>(type: "INTEGER", nullable: false, defaultValue: true),
+                    DataCadastro = table.Column<DateTime>(type: "TEXT", nullable: false, defaultValueSql: "GETDATE()")
                 },
                 constraints: table =>
                 {
@@ -64,17 +64,17 @@ namespace SistemaChamados.Migrations
                 name: "Usuarios",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    NomeCompleto = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
-                    SenhaHash = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    TipoUsuario = table.Column<int>(type: "int", nullable: false),
-                    DataCadastro = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
-                    Ativo = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
-                    EspecialidadeCategoriaId = table.Column<int>(type: "int", nullable: true),
-                    PasswordResetToken = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: true),
-                    ResetTokenExpires = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    NomeCompleto = table.Column<string>(type: "TEXT", maxLength: 150, nullable: false),
+                    Email = table.Column<string>(type: "TEXT", maxLength: 150, nullable: false),
+                    SenhaHash = table.Column<string>(type: "TEXT", maxLength: 255, nullable: false),
+                    TipoUsuario = table.Column<int>(type: "INTEGER", nullable: false),
+                    DataCadastro = table.Column<DateTime>(type: "TEXT", nullable: false, defaultValueSql: "GETDATE()"),
+                    Ativo = table.Column<bool>(type: "INTEGER", nullable: false, defaultValue: true),
+                    EspecialidadeCategoriaId = table.Column<int>(type: "INTEGER", nullable: true),
+                    PasswordResetToken = table.Column<string>(type: "TEXT", maxLength: 128, nullable: true),
+                    ResetTokenExpires = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -85,19 +85,19 @@ namespace SistemaChamados.Migrations
                 name: "Chamados",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Titulo = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
-                    Descricao = table.Column<string>(type: "NVARCHAR(MAX)", nullable: false),
-                    DataAbertura = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
-                    DataFechamento = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    DataUltimaAtualizacao = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    SolicitanteId = table.Column<int>(type: "int", nullable: false),
-                    TecnicoId = table.Column<int>(type: "int", nullable: true),
-                    CategoriaId = table.Column<int>(type: "int", nullable: false),
-                    PrioridadeId = table.Column<int>(type: "int", nullable: false),
-                    StatusId = table.Column<int>(type: "int", nullable: false),
-                    SlaDataExpiracao = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Titulo = table.Column<string>(type: "TEXT", maxLength: 200, nullable: false),
+                    Descricao = table.Column<string>(type: "TEXT", nullable: false),
+                    DataAbertura = table.Column<DateTime>(type: "TEXT", nullable: false, defaultValueSql: "GETDATE()"),
+                    DataFechamento = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    DataUltimaAtualizacao = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    SolicitanteId = table.Column<int>(type: "INTEGER", nullable: false),
+                    TecnicoId = table.Column<int>(type: "INTEGER", nullable: true),
+                    CategoriaId = table.Column<int>(type: "INTEGER", nullable: false),
+                    PrioridadeId = table.Column<int>(type: "INTEGER", nullable: false),
+                    StatusId = table.Column<int>(type: "INTEGER", nullable: false),
+                    SlaDataExpiracao = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -138,12 +138,12 @@ namespace SistemaChamados.Migrations
                 name: "Comentarios",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Texto = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
-                    DataCriacao = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
-                    ChamadoId = table.Column<int>(type: "int", nullable: false),
-                    UsuarioId = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Texto = table.Column<string>(type: "TEXT", maxLength: 1000, nullable: false),
+                    DataCriacao = table.Column<DateTime>(type: "TEXT", nullable: false, defaultValueSql: "GETDATE()"),
+                    ChamadoId = table.Column<int>(type: "INTEGER", nullable: false),
+                    UsuarioId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {

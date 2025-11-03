@@ -46,7 +46,7 @@ public class ApplicationDbContext : DbContext
             entity.HasKey(e => e.Id);
             entity.Property(e => e.Id).ValueGeneratedOnAdd();
             entity.Property(e => e.Titulo).IsRequired().HasMaxLength(200);
-            entity.Property(e => e.Descricao).IsRequired().HasColumnType("NVARCHAR(MAX)");
+            entity.Property(e => e.Descricao).IsRequired();
             entity.Property(e => e.DataAbertura).IsRequired().HasDefaultValueSql("GETDATE()");
             entity.Property(e => e.SolicitanteId).IsRequired();
             entity.Property(e => e.CategoriaId).IsRequired();

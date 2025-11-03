@@ -14,7 +14,17 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Configurar Entity Framework
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+{
+    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+    if (connectionString.Contains("Data Source="))
+    {
+        options.UseSqlite(connectionString);
+    }
+    else
+    {
+        options.UseSqlServer(connectionString);
+    }
+});
     
 // Registrar serviços
 builder.Services.AddScoped<ITokenService, TokenService>();
