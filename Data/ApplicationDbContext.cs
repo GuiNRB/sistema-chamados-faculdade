@@ -46,12 +46,13 @@ public class ApplicationDbContext : DbContext
             entity.HasKey(e => e.Id);
             entity.Property(e => e.Id).ValueGeneratedOnAdd();
             entity.Property(e => e.Titulo).IsRequired().HasMaxLength(200);
-            entity.Property(e => e.Descricao).IsRequired().HasMaxLength(2000);
+            entity.Property(e => e.Descricao).IsRequired();
             entity.Property(e => e.DataAbertura).IsRequired().HasDefaultValueSql("GETDATE()");
             entity.Property(e => e.SolicitanteId).IsRequired();
             entity.Property(e => e.CategoriaId).IsRequired();
             entity.Property(e => e.PrioridadeId).IsRequired();
             entity.Property(e => e.StatusId).IsRequired();
+            entity.Property(e => e.SlaDataExpiracao).IsRequired(false); // Campo opcional
         });
         
         // Configuração da entidade Categoria

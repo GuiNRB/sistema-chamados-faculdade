@@ -1,6 +1,6 @@
-# Sistema de Chamados - API
+# Sistema de Chamados - NeuroHelp
 
-API desenvolvida em ASP.NET Core 8 para gerenciamento de chamados de suporte técnico em ambiente acadêmico.
+Sistema de helpdesk desenvolvido em ASP.NET Core MVC 8.0 com funcionalidades completas migradas da versão desktop.
 
 ## 🏗️ Arquitetura
 
@@ -128,10 +128,40 @@ Use o arquivo `test-admin-register.http` para testar os endpoints com diferentes
 - **CORS**: Configurado para desenvolvimento
 - **HTTPS**: Redirecionamento automático
 
+## 🚀 Funcionalidades Migradas
+
+- ✅ **Sistema de Autenticação JWT** com redirecionamento baseado no tipo de usuário
+- ✅ **Dashboards Específicos** para cada tipo de usuário:
+  - Usuário (TipoUsuario = 1): Dashboard do usuário
+  - Técnico (TipoUsuario = 2): Dashboard do técnico  
+  - Administrador (TipoUsuario = 3): Dashboard administrativo
+- ✅ **Interface Web Responsiva** com design desktop migrado
+- ✅ **Integração com OpenAI** para funcionalidades de IA
+- ✅ **Banco de dados SQLite** para desenvolvimento
+
+## 👤 Usuários de Teste
+
+O sistema inclui usuários pré-configurados para teste:
+
+- **Administrador**: admin@helpdesk.com / senha123
+- **Usuário Teste**: admin.teste@helpdesk.com / senha123
+
+## 🔐 Configuração de Ambiente
+
+1. Copie o arquivo de exemplo:
+```bash
+cp .env.example .env
+```
+
+2. Configure sua chave da OpenAI no arquivo `.env`:
+```env
+OPENAI_API_KEY=sua-chave-openai-aqui
+```
+
 ## 📝 Próximos Passos
 
-- [ ] Implementar autenticação JWT
-- [ ] Adicionar endpoints para alunos e professores
-- [ ] Implementar sistema de chamados
+- [ ] Implementar funcionalidades completas de chamados
+- [ ] Adicionar sistema de notificações
+- [ ] Implementar relatórios e dashboards avançados
 - [ ] Adicionar testes unitários
 - [ ] Configurar logging estruturado

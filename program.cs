@@ -12,9 +12,16 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-// Configurar Entity Framework
+// Configurar Entity Framework - FORÇAR SQL SERVER
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+{
+    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+    Console.WriteLine($"Connection String: {connectionString}");
+    
+    // SEMPRE usar SQL Server - removida lógica de detecção automática
+    options.UseSqlServer(connectionString);
+    Console.WriteLine("Configurado para usar SQL Server");
+});
     
 // Registrar serviços
 builder.Services.AddScoped<ITokenService, TokenService>();
@@ -41,7 +48,8 @@ builder.Services.AddCors(options =>
     {
         policy.WithOrigins(
                   "http://127.0.0.1:5500", "http://localhost:5500", // Live Server antigo
-                  "http://localhost:5027", "https://localhost:7086"  // Portas padrão do ASP.NET MVC Web App (verificadas no launchSettings.json)
+                  "http://localhost:5027", "https://localhost:7086",  // Portas padrão do ASP.NET MVC Web App (verificadas no launchSettings.json)
+                  "https://work-2-arvjphcenxjpqptd.prod-runtime.all-hands.dev" // Ambiente de produção
               ) 
               .AllowAnyMethod()
               .AllowAnyHeader();
@@ -103,11 +111,16 @@ builder.Services.AddSwaggerGen(options =>
 
 var app = builder.Build();
 
-// Criar banco de dados em memória para demonstração
-using (var scope = app.Services.CreateScope())
+// Popular dados iniciais (apenas em desenvolvimento)
+if (app.Environment.IsDevelopment())
 {
-    var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    context.Database.EnsureCreated();
+    using (var scope = app.Services.CreateScope())
+    {
+        var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        // Banco SQL Server já existe, não aplicar migrations automaticamente
+        // Para marcar migration como aplicada: dotnet ef database update --connection "sua-connection-string"
+        SeedData.Initialize(context);
+    }
 }
 
 // Configure the HTTP request pipeline.
