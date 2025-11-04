@@ -12,18 +12,15 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-// Configurar Entity Framework
+// Configurar Entity Framework - FORÇAR SQL SERVER
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-    if (connectionString.Contains("Data Source="))
-    {
-        options.UseSqlite(connectionString);
-    }
-    else
-    {
-        options.UseSqlServer(connectionString);
-    }
+    Console.WriteLine($"Connection String: {connectionString}");
+    
+    // SEMPRE usar SQL Server - removida lógica de detecção automática
+    options.UseSqlServer(connectionString);
+    Console.WriteLine("Configurado para usar SQL Server");
 });
     
 // Registrar serviços
