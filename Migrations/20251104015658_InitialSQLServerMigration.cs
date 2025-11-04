@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace SistemaChamados.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialSQLiteMigration : Migration
+    public partial class InitialSQLServerMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

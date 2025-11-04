@@ -114,13 +114,14 @@ builder.Services.AddSwaggerGen(options =>
 
 var app = builder.Build();
 
-// Aplicar migrations automaticamente e popular dados iniciais (apenas em desenvolvimento)
+// Popular dados iniciais (apenas em desenvolvimento)
 if (app.Environment.IsDevelopment())
 {
     using (var scope = app.Services.CreateScope())
     {
         var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        // context.Database.Migrate(); // COMENTADO: Banco já existe, migration será marcada manualmente
+        // Banco SQL Server já existe, não aplicar migrations automaticamente
+        // Para marcar migration como aplicada: dotnet ef database update --connection "sua-connection-string"
         SeedData.Initialize(context);
     }
 }
