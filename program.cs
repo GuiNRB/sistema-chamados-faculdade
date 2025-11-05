@@ -103,7 +103,7 @@ builder.Services.AddSwaggerGen(options =>
 
 var app = builder.Build();
 
-// Criar banco de dados em memória para demonstração
+// Criar banco de dados
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
