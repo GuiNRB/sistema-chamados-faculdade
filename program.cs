@@ -14,7 +14,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Configurar Entity Framework
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
     
 // Registrar serviços
 builder.Services.AddScoped<ITokenService, TokenService>();
@@ -117,8 +117,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-// Usar CORS
-app.UseCors("AllowAll");
+// Configurar arquivos estáticos (deve vir antes de UseRouting)
+app.UseDefaultFiles(); // Serve index.html automaticamente
+app.UseStaticFiles();  // Serve arquivos estáticos da pasta wwwroot
+
+// Usar CORS (comentado pois não é mais necessário - mesmo servidor)
+// app.UseCors("AllowAll");
 
 //app.UseHttpsRedirection();
 
