@@ -15,7 +15,7 @@
         <nav>
           <a href="tecnico-dashboard.html" class="active">🔧 Painel Técnico</a>
           <a href="tecnico-config-desktop.html">⚙️ Configurações</a>
-          <a href="login-desktop.html" id="nav-logout">🚪 Sair</a>
+          <a href="#" id="nav-logout" onclick="sessionStorage.removeItem('authToken'); sessionStorage.removeItem('currentTicketId'); localStorage.removeItem('user'); window.location.href='/';;">🚪 Sair</a>
         </nav>
       </aside>
 

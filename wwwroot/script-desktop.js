@@ -968,6 +968,15 @@ function initConfig() {
       if (confirm("Deseja realmente sair?")) logout();
     });
   }
+  
+  // Também capturar links de logout na navegação
+  const navLogoutLink = $("#nav-logout");
+  if (navLogoutLink) {
+    navLogoutLink.addEventListener("click", (e) => {
+      e.preventDefault(); // Impedir navegação direta
+      if (confirm("Deseja realmente sair?")) logout();
+    });
+  }
 
   const voltarBtn = $("#btn-voltar-dashboard");
   if (voltarBtn) {

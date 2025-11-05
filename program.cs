@@ -6,15 +6,16 @@ using SistemaChamados.Application.Services;
 using SistemaChamados.Services;
 using SistemaChamados.Data;
 using SistemaChamados.Configuration;
+using SistemaChamados.Core.Entities;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-// Configurar Entity Framework
+// Configurar Entity Framework (temporariamente SQLite para teste)
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlite("Data Source=sistemachamados.db"));
     
 // Registrar serviços
 builder.Services.AddScoped<ITokenService, TokenService>();
@@ -103,11 +104,50 @@ builder.Services.AddSwaggerGen(options =>
 
 var app = builder.Build();
 
-// Criar banco de dados
+// Criar banco de dados e adicionar dados de teste
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     context.Database.EnsureCreated();
+    
+    // Adicionar dados de seed apenas se não existirem
+    if (!context.Usuarios.Any())
+    {
+        // Criar status
+        var statusAberto = new Status { Nome = "Aberto" };
+        var statusAndamento = new Status { Nome = "Em Andamento" };
+        var statusFechado = new Status { Nome = "Fechado" };
+        
+        context.Status.AddRange(statusAberto, statusAndamento, statusFechado);
+        
+        // Criar prioridades
+        var prioridadeBaixa = new Prioridade { Nome = "Baixa" };
+        var prioridadeMedia = new Prioridade { Nome = "Média" };
+        var prioridadeAlta = new Prioridade { Nome = "Alta" };
+        
+        context.Prioridades.AddRange(prioridadeBaixa, prioridadeMedia, prioridadeAlta);
+        
+        // Criar categorias
+        var categoriaHardware = new Categoria { Nome = "Hardware", Descricao = "Problemas relacionados a equipamentos" };
+        var categoriaSoftware = new Categoria { Nome = "Software", Descricao = "Problemas relacionados a programas" };
+        var categoriaRede = new Categoria { Nome = "Rede", Descricao = "Problemas relacionados à conectividade" };
+        
+        context.Categorias.AddRange(categoriaHardware, categoriaSoftware, categoriaRede);
+        
+        // Criar usuário admin
+        var adminUser = new Usuario
+        {
+            NomeCompleto = "Administrador",
+            Email = "admin@helpdesk.com",
+            SenhaHash = BCrypt.Net.BCrypt.HashPassword("senha123"),
+            TipoUsuario = 3, // Admin
+            DataCadastro = DateTime.Now,
+            Ativo = true
+        };
+        
+        context.Usuarios.Add(adminUser);
+        context.SaveChanges();
+    }
 }
 
 // Configure the HTTP request pipeline.

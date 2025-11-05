@@ -17,7 +17,7 @@
           <a href="admin-tickets-desktop.html">📋 Chamados</a>
           <a href="admin-cadastrar-tecnico.html">🧑‍🔧 Cadastrar Técnico</a>
           <a href="config-desktop.html">⚙️ Configurações</a>
-          <a href="login-desktop.html" id="nav-logout">🚪 Sair</a>
+          <a href="#" id="nav-logout" onclick="sessionStorage.removeItem('authToken'); sessionStorage.removeItem('currentTicketId'); localStorage.removeItem('user'); window.location.href='/';;">🚪 Sair</a>
         </nav>
       </aside>
 
