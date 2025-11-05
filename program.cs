@@ -13,9 +13,24 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-// Configurar Entity Framework (temporariamente SQLite para teste)
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlite("Data Source=sistemachamados.db"));
+// Configurar Entity Framework
+// Para produção: SQL Server
+// Para desenvolvimento/demonstração: SQLite (quando SQL Server não estiver disponível)
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+var useSqlite = builder.Configuration.GetValue<bool>("UseSqliteForDemo", false);
+
+if (useSqlite || string.IsNullOrEmpty(connectionString))
+{
+    // Usar SQLite apenas para demonstração
+    builder.Services.AddDbContext<ApplicationDbContext>(options =>
+        options.UseSqlite("Data Source=sistemachamados_demo.db"));
+}
+else
+{
+    // Usar SQL Server para produção
+    builder.Services.AddDbContext<ApplicationDbContext>(options =>
+        options.UseSqlServer(connectionString));
+}
     
 // Registrar serviços
 builder.Services.AddScoped<ITokenService, TokenService>();
