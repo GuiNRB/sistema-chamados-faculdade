@@ -378,10 +378,10 @@ test-*.http
 # Executables (should not be in version control)
 *.exe
 
-# Database files específicos do projeto
-sistemachamados.db
-sistemachamados.db-shm
-sistemachamados.db-wal
+# Database files específicos do projeto (SQL Server)
+# Arquivos de backup do SQL Server
+*.bak
+*.trn
 
 # Logs do servidor
 server.log

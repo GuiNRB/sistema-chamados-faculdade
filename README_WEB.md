@@ -22,13 +22,14 @@ Esta é a versão web unificada do Sistema de Chamados, onde tanto o frontend (H
 - **Variável API_BASE**: Alterada de `"http://localhost:5246"` para `""` (vazio)
 
 ### 4. Banco de Dados
-- **SQLite**: Configurado para usar SQLite em vez de SQL Server para facilitar o desenvolvimento
-- **Connection String**: `"Data Source=sistemachamados.db"`
+- **SQL Server**: Mantém a configuração original para SQL Server
+- **Connection String**: `"Server=localhost;Database=SistemaChamados;Trusted_Connection=True;Encrypt=False;"`
 
 ## Como Executar
 
 ### Pré-requisitos
 - .NET 8.0 SDK instalado
+- SQL Server (LocalDB, Express ou completo)
 - Git (para clonar o repositório)
 
 ### Passos para Execução
@@ -98,7 +99,8 @@ sistema-chamados-faculdade/
 
 ## Observações
 
-- O banco de dados SQLite será criado automaticamente na primeira execução
+- Certifique-se de que o SQL Server está rodando e acessível
+- O banco de dados `SistemaChamados` deve existir (use os scripts da pasta `Scripts/` para criar)
 - Os logs do servidor são salvos em `server.log` (quando executado em background)
 - Arquivos temporários e de build estão configurados no `.gitignore`
 
@@ -117,8 +119,10 @@ kill -9 <PID>           # Linux/Mac
 ```
 
 ### Erro de banco de dados:
-- Verifique se o arquivo `sistemachamados.db` foi criado na raiz do projeto
-- Se houver problemas, delete o arquivo `.db` e execute novamente
+- Verifique se o SQL Server está rodando
+- Confirme se o banco `SistemaChamados` existe
+- Execute os scripts da pasta `Scripts/` para criar as tabelas e dados iniciais
+- Verifique a connection string no `appsettings.json`
 
 ### Problemas com JavaScript:
 - Abra as ferramentas de desenvolvedor do navegador (F12)
