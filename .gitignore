@@ -377,3 +377,14 @@ test-*.http
 
 # Executables (should not be in version control)
 *.exe
+
+# Database files específicos do projeto
+sistemachamados.db
+sistemachamados.db-shm
+sistemachamados.db-wal
+
+# Logs do servidor
+server.log
+
+# Arquivos temporários do Microsoft
+packages-microsoft-prod.deb
