@@ -19,4 +19,6 @@ public class CriarChamadoRequestDto
     [Required(ErrorMessage = "Prioridade é obrigatória")]
     [Range(1, int.MaxValue, ErrorMessage = "ID da prioridade deve ser maior que zero")]
     public int PrioridadeId { get; set; }
+
+    public bool UsarAnaliseAutomatica { get; set; } = false;
 }
