@@ -1,3 +1,5 @@
+using System;
+
 namespace SistemaChamados.Shared.DTOs;
 
 public class UsuarioResponseDto
