@@ -1,0 +1,10 @@
+{
+    "dotnet.defaultSolution": "sistema-chamados-faculdade.sln",
+    "omnisharp.defaultLaunchSolution": "sistema-chamados-faculdade.sln",
+    "files.exclude": {
+        "**/bin": true,
+        "**/obj": true
+    },
+    "dotnet.completion.showCompletionItemsFromUnimportedNamespaces": true,
+    "dotnet.server.useOmnisharp": false
+}
