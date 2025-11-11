@@ -3,7 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Microsoft.Maui.Controls;
-using SistemaChamados.Mobile.Models.DTOs;
+using SistemaChamados.Shared.DTOs;
 using SistemaChamados.Mobile.Services.Chamados;
 using SistemaChamados.Mobile.Services.Categorias;
 using SistemaChamados.Mobile.Services.Prioridades;

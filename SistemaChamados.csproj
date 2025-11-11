@@ -20,6 +20,16 @@
     <Compile Remove="SistemaChamados.Web\**\*.cs" />
     <Content Remove="SistemaChamados.Web\**" />
     <None Remove="SistemaChamados.Web\**" />
+    <Compile Remove="Mobile\**\*.cs" />
+    <Content Remove="Mobile\**" />
+    <None Remove="Mobile\**" />
+    <Compile Remove="SistemaChamados.Shared\**\*.cs" />
+    <Content Remove="SistemaChamados.Shared\**" />
+    <None Remove="SistemaChamados.Shared\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="SistemaChamados.Shared\SistemaChamados.Shared.csproj" />
   </ItemGroup>
 
 </Project>

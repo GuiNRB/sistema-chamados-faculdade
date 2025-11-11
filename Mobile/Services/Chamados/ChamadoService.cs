@@ -1,4 +1,4 @@
-using SistemaChamados.Mobile.Models.DTOs;
+using SistemaChamados.Shared.DTOs;
 using SistemaChamados.Mobile.Services.Api;
 
 namespace SistemaChamados.Mobile.Services.Chamados;

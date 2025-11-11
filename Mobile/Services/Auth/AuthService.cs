@@ -1,5 +1,5 @@
 using SistemaChamados.Mobile.Helpers;
-using SistemaChamados.Mobile.Models.DTOs;
+using SistemaChamados.Shared.DTOs;
 using SistemaChamados.Mobile.Services.Api;
 using System.Diagnostics;
 

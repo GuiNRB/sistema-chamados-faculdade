@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using SistemaChamados.Core.Entities;
+using SistemaChamados.Shared.Entities;
 using SistemaChamados.Data;
 
 namespace SistemaChamados.API.Controllers;

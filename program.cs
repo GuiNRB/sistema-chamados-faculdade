@@ -6,7 +6,7 @@ using SistemaChamados.Application.Services;
 using SistemaChamados.Services;
 using SistemaChamados.Data;
 using SistemaChamados.Configuration;
-using SistemaChamados.Core.Entities;
+using SistemaChamados.Shared.Entities;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);

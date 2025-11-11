@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Microsoft.Maui.Controls;
-using SistemaChamados.Mobile.Models.DTOs;
+using SistemaChamados.Shared.DTOs;
 using SistemaChamados.Mobile.Services.Auth;
 using SistemaChamados.Mobile.Services.Chamados;
 

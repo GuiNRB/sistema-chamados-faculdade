@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using SistemaChamados.Application.DTOs;
-using SistemaChamados.Core.Entities;
+using SistemaChamados.Shared.DTOs;
+using SistemaChamados.Shared.Entities;
 using SistemaChamados.Data;
 using SistemaChamados.Services;
 using System.Security.Claims;

@@ -1,4 +1,4 @@
-using SistemaChamados.Application.DTOs;
+using SistemaChamados.Shared.DTOs;
 
 namespace SistemaChamados.Services
 {

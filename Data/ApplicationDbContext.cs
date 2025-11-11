@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using SistemaChamados.Core.Entities;
+using SistemaChamados.Shared.Entities;
 
 namespace SistemaChamados.Data;
 

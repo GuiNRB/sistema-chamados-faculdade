@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using SistemaChamados.Application.DTOs;
+using SistemaChamados.Shared.DTOs;
 using SistemaChamados.Data;
 using System.Text;
 using System.Text.Json;

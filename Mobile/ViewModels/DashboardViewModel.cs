@@ -1,6 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using SistemaChamados.Mobile.Models.DTOs;
+using SistemaChamados.Shared.DTOs;
 using SistemaChamados.Mobile.Services.Chamados;
 using System.Collections.ObjectModel;
 

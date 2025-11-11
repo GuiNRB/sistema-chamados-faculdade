@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using Microsoft.Maui.Controls;
 using SistemaChamados.Mobile.Helpers;
-using SistemaChamados.Mobile.Models.DTOs;
+using SistemaChamados.Shared.DTOs;
 using SistemaChamados.Mobile.ViewModels;
 
 namespace SistemaChamados.Mobile.Views;

@@ -1,4 +1,4 @@
-using SistemaChamados.Mobile.Models.DTOs;
+using SistemaChamados.Shared.DTOs;
 
 namespace SistemaChamados.Mobile.Services.Auth;
 
