@@ -444,26 +444,24 @@ private DateTime? CalcularSla(int nivelPrioridade, DateTime dataAbertura)
 {
     int diasUteisParaAdicionar;
 
-    switch (nivelPrioridade)
-    {
-        case 3: // Alta
-            diasUteisParaAdicionar = 1;
-            break;
-        case 2: // Média
-            diasUteisParaAdicionar = 3;
-            break;
-        case 1: // Baixa
-            diasUteisParaAdicionar = 5;
-            break;
-        default: // Prioridade desconhecida, não define SLA
-            return null;
-    }
+        switch (nivelPrioridade)
+        {
+            case 3: // Alta
+                diasUteisParaAdicionar = 1;
+                break;
+            case 2: // Média
+                diasUteisParaAdicionar = 3;
+                break;
+            case 1: // Baixa
+                diasUteisParaAdicionar = 5;
+                break;
+            default: // Prioridade desconhecida, não define SLA
+                return null;
+        }
 
-    // Define a data de expiração para o final do dia de trabalho
-    var dataExpiracao = AddBusinessDays(dataAbertura, diasUteisParaAdicionar);
-    
-    // Retorna a data no final do dia (ex: 23:59:59)
-    return dataExpiracao.Date.AddDays(1).AddTicks(-1);
+        var dataFinalDoDia = AddBusinessDays(dataAbertura.Date, diasUteisParaAdicionar);
+        return dataFinalDoDia.AddDays(1);
+
 }
 
 /**

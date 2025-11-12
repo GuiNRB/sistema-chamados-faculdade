@@ -697,7 +697,6 @@ async function initTicketDetails() {
         $("#t-sla-expiracao").textContent = chamado.slaDataExpiracao
           ? new Date(chamado.slaDataExpiracao).toLocaleDateString('pt-BR')
           : 'N/A';
-        // --- FIM DO TRECHO ADICIONADO ---
 
       } catch (e) {
         console.error("Erro ao formatar datas:", e);
@@ -1385,7 +1384,16 @@ function addCommentToUI(comentario) {
   li.style.marginBottom = "10px"; // Adiciona um espaçamento
 
   const autor = comentario.usuarioNome || 'Usuário';
-  const data = new Date(comentario.dataCriacao).toLocaleString('pt-BR');
+  const dataComZ = comentario.dataCriacao.endsWith('Z') ? comentario.dataCriacao : comentario.dataCriacao + 'Z';
+  const dataFormatada = new Date(dataComZ).toLocaleString('pt-BR', {
+      timeZone: 'America/Sao_Paulo', 
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit'
+  });
   const texto = comentario.texto || 'Comentário sem texto';
 
   // Usar .textContent para segurança contra XSS
@@ -1395,7 +1403,7 @@ function addCommentToUI(comentario) {
   const spanData = document.createElement("span");
   spanData.style.color = "var(--muted)";
   spanData.style.fontSize = "12px";
-  spanData.textContent = `— ${data}`;
+  spanData.textContent = `— ${dataFormatada}`;
   
   const pTexto = document.createElement("p");
   pTexto.style.marginTop = "4px";
@@ -1745,7 +1753,8 @@ function initPasswordToggles() {
       if (!input) return;
       const show = input.type === "password";
       input.type = show ? "text" : "password";
-      btn.textContent = show ? "🙈" : "👁️";
+      // btn.textContent = show ? "🙈" : "👁️";
+      btn.textContent = input.type === "text" ? "🙈" : "👁️";
     });
   });
 }
@@ -1773,6 +1782,7 @@ document.addEventListener("DOMContentLoaded", () => {
     atualizarSaudacaoUsuario(); // <-- CHAMADA ADICIONADA
   } else if (path.endsWith("cadastro-desktop.html")) {
     initRegister();
+    initPasswordToggles();
   } else if (path.endsWith("novo-ticket-desktop.html")) {
     initNewTicket();
   } else if (path.endsWith("ticket-detalhes-desktop.html")) {
@@ -1794,6 +1804,7 @@ document.addEventListener("DOMContentLoaded", () => {
   } else if (path.endsWith("admin-cadastrar-tecnico.html")) {
     initCadastrarTecnico();
     initConfig(); // Mantém o logout
+    initPasswordToggles();
   } else if (path.endsWith("admin-tickets-desktop.html")) { // <-- ADICIONAR ESTE BLOCO
     initAdminTicketsPage();
     initConfig(); // Para o logout funcionar

@@ -14,23 +14,17 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 // Configurar Entity Framework
-// Para produção: SQL Server
-// Para desenvolvimento/demonstração: SQLite (quando SQL Server não estiver disponível)
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-var useSqlite = builder.Configuration.GetValue<bool>("UseSqliteForDemo", false);
 
-if (useSqlite || string.IsNullOrEmpty(connectionString))
+if (string.IsNullOrEmpty(connectionString))
 {
-    // Usar SQLite apenas para demonstração
-    builder.Services.AddDbContext<ApplicationDbContext>(options =>
-        options.UseSqlite("Data Source=sistemachamados_demo.db"));
+    // Se a string de conexão estiver vazia, lance uma exceção clara.
+    throw new InvalidOperationException("A string de conexão 'DefaultConnection' não está configurada. Configure o SQL Server no appsettings.json.");
 }
-else
-{
-    // Usar SQL Server para produção
-    builder.Services.AddDbContext<ApplicationDbContext>(options =>
-        options.UseSqlServer(connectionString));
-}
+
+// Configuração forçada para o SQL Server
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlServer(connectionString));
     
 // Registrar serviços
 builder.Services.AddScoped<ITokenService, TokenService>();
@@ -45,10 +39,13 @@ builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("Emai
 // Registra o EmailService para injeção de dependência
 builder.Services.AddTransient<IEmailService, EmailService>();
 
-builder.Services.AddControllers().AddJsonOptions(options =>
-{
-    options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
-});
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        // Garante que não haja ciclos de referência (mantendo a funcionalidade original)
+        options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles; 
+        
+    });
 
 // Configurar CORS para permitir o frontend (Live Server) E A NOVA APLICAÇÃO WEB
 builder.Services.AddCors(options =>
@@ -123,7 +120,6 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    context.Database.EnsureCreated();
     
     // Adicionar dados de seed apenas se não existirem
     if (!context.Usuarios.Any())

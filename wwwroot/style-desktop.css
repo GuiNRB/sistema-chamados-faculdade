@@ -563,3 +563,66 @@ input:checked + .slider:before {
 .slider.round:before {
   border-radius: 50%;
 }
+
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+    display: none;
+}
+
+input[type="password"]::-webkit-outer-spin-button,
+input[type="password"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input::-webkit-contacts-auto-fill-button,
+input::-webkit-credentials-auto-fill-button {
+    visibility: hidden;
+    pointer-events: none;
+    position: absolute;
+    right: 0;
+}
+/* --- CORREÇÃO FINAL PARA ÍCONE DE SENHA E LAYOUT --- */
+
+/* 1. Garante que a Label fique acima do Input Group */
+/* O form-group DEVE estar configurado para empilhar. 
+   Se o form-group original não for 'display: flex' ou tiver 'flex-direction: column', 
+   adicione estas regras: */
+.form-group {
+    display: block; /* Garante que ocupe a largura total */
+    margin-bottom: 15px; /* Espaçamento entre campos */
+}
+
+.form-group label {
+    display: block; /* Garante que a label ocupe uma linha inteira */
+    margin-bottom: 5px;
+}
+
+/* 2. Garante que o Input e o Botão fiquem na mesma linha (Input Group) */
+.input-group {
+    display: flex;
+    align-items: center;
+    position: relative;
+    width: 100%;
+}
+
+/* 3. Posiciona o Botão 'Olho' no canto do input */
+.input-group .toggle-btn {
+    /* Estas regras forçam o botão a sobrepor o campo na lateral direita */
+    position: absolute; 
+    right: 5px; 
+    /* Altura e estilo para o botão não interferir no clique do input */
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 8px 10px; /* Garante que a área de clique seja decente */
+    z-index: 10; /* Garante que ele fique acima do input */
+    font-size: 16px; /* Tamanho do ícone */
+}
+
+/* 4. Ajusta o input para dar espaço ao botão (evita que o texto se esconda) */
+.input-group input[type="password"],
+.input-group input[type="text"] {
+    /* Adiciona padding suficiente na direita para o ícone (o tamanho do ícone + padding) */
+    padding-right: 40px !important; 
+}
